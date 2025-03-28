@@ -6,6 +6,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import Cookies from "js-cookie";
 
+const API_URL = import.meta.env.VITE_API_URL;
 
 // import { set } from "mongoose";
 
@@ -41,7 +42,7 @@ const Dashboard = () => {
     const getAllEvents = async () => {
       try {
         const response = await axios.get(
-          "https://re-event-1.onrender.com/events/getevents"
+          `${API_URL}/events/getevents`
         );
         setEvents(response.data);
         separateEvents(response.data);

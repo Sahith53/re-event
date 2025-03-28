@@ -6,6 +6,8 @@ import { FaArrowRight } from "react-icons/fa6";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const EventCard = (props) => {
   const { eventname, time, location, organiser, image, id, description } =
     props;
@@ -18,7 +20,7 @@ const EventCard = (props) => {
     const getuserEvents = async () => {
       try {
         const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/geteventsbyuserid/${_umail}`
+          `${API_URL}/events/geteventsbyuserid/${_umail}`
         );
         // console.log(response.data.createdEvents);
         const userEvents = response.data.createdEvents.map((event) => event);

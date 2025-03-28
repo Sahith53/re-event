@@ -3,6 +3,7 @@ import EventCard from "../components/Dashboard/EventCard";
 import axios from "axios";
 import { toast } from "sonner";
 
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Explore = () => {
   const [events, setEvents] = useState([]);
@@ -10,7 +11,7 @@ const Explore = () => {
   useEffect(() => {
     const getAllEvents = async () => {
       try {
-        const response = await axios.get('https://re-event-backend.onrender.com/events/getevents');
+        const response = await axios.get(`${API_URL}/events/getevents`);
         setEvents(response.data);
       } catch (error) {
         console.error('Error:', error);
