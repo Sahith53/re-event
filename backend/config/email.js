@@ -3,6 +3,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Verify environment variables
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.EMAIL_FROM) {
+  console.error('Missing required email environment variables');
+  console.error('EMAIL_USER:', process.env.EMAIL_USER ? 'Set' : 'Missing');
+  console.error('EMAIL_PASS:', process.env.EMAIL_PASS ? 'Set' : 'Missing');
+  console.error('EMAIL_FROM:', process.env.EMAIL_FROM ? 'Set' : 'Missing');
+  throw new Error('Missing required email environment variables');
+}
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -11,13 +20,33 @@ const transporter = nodemailer.createTransport({
   },
   tls: {
     rejectUnauthorized: false
+  },
+  debug: true // Enable debug logging
+});
+
+// Verify transporter configuration
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('Transporter verification failed:', error);
+    console.error('Error details:', {
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode
+    });
+  } else {
+    console.log('Transporter verification successful');
+    console.log('Server is ready to send emails');
   }
 });
 
 export const sendEmail = async (to, subject, html) => {
   try {
+    console.log('Attempting to send email to:', to);
+    console.log('Using email account:', process.env.EMAIL_USER);
+
     const mailOptions = {
-      from: process.env.EMAIL_FROM,
+      from: `"Re:Event" <${process.env.EMAIL_FROM}>`,
       to,
       subject,
       html
@@ -28,7 +57,14 @@ export const sendEmail = async (to, subject, html) => {
     return true;
   } catch (error) {
     console.error('Error sending email:', error);
-    throw new Error('Failed to send email');
+    console.error('Error details:', {
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode,
+      stack: error.stack
+    });
+    throw new Error(`Failed to send email: ${error.message}`);
   }
 };
 
