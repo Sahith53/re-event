@@ -6,7 +6,7 @@ import { FaCamera } from "react-icons/fa";
 import { RiBox3Fill } from "react-icons/ri";
 import GuestListItem from "./GuestListItem";
 import GuestDetailsPopup from "./GuestDetailsPopup";
-import QrReader from "modern-react-qr-reader";
+import { Html5QrcodeScanner } from "html5-qrcode";
 import axios from "axios";
 import { CSVLink } from "react-csv";
 
@@ -27,7 +27,6 @@ const Checkin = () => {
           `https://re-event-backend.onrender.com/events/qrscancall/${id}`,
           { scannedData: data }
         );
-        //   console.log(response.data.matchedUser.approveStatus)
         if (response.data) {
           setSelectedGuest(response.data);
           setScanModalOpen(false);
@@ -44,7 +43,6 @@ const Checkin = () => {
     }
   }, [data]);
 
-
   useEffect(() => {
     const fetchGuests = async () => {
       try {
@@ -60,7 +58,6 @@ const Checkin = () => {
     fetchGuests();
   }, [selectedGuest]);
 
-
   const openScanModal = () => {
     setScanModalOpen(true);
   };
@@ -69,13 +66,12 @@ const Checkin = () => {
     setScanModalOpen(false);
   };
 
-
   const filteredGuests = guestsData && guestsData.filter((guest) => {
     return (
       guest.email && guest.email.toLowerCase().includes(searchQuery.toLowerCase())
     )}
   );
-  console.log(filteredGuests);
+
   const exportData = {
     filename: "guests.csv",
     data: guestsData.map((guest) => ({
@@ -87,16 +83,10 @@ const Checkin = () => {
     })),
   };
 
-
-  const handleScan = async (data) => {
-    if (data) {
-      const result = data;
-      console.log(result);
-      setData(result);
+  const handleScan = async (decodedText) => {
+    if (decodedText) {
+      setData(decodedText);
     }
-  };
-  const handleError = (err) => {
-    console.error(err);
   };
 
   const closePopup = () => {
@@ -104,94 +94,82 @@ const Checkin = () => {
   };
 
   return (
-    <>
-      <div
-        className={`${selectedGuest ? "fixed" : ""
-          } w-full flex p-12 justify-center`}
-      >
-        <Link
-          to={`/manage/${id}`}
-          className="text-xl items-center  group font-semibold hidden fixed top-[5rem]  -left-6 md:flex -rotate-90"
-        >
-          <RiBox3Fill className="text-2xl transform mr-2 group-hover:rotate-180 transition-all " />
-          Re:
-          <h1 className="bg-gradient-to-r from-white/50 to-pink-500 text-transparent bg-clip-text">
-            Event
-          </h1>
-        </Link>
-        <div className={`  w-3/4 flex flex-col gap-3`}>
-          <div className="flex items-center justify-between w-full">
-            <p>Check in Guests - {id} </p>
-            <div className="flex gap-2">
-              <CSVLink {...exportData} className="px-6 bg-zinc-700 rounded-lg cursor-pointer hover:bg-zinc-100/80 hover:text-black flex items-center transition-all text-center py-1.5">
-                Export
-                <PiExport className="ml-2 text-xl" />
-              </CSVLink>
-              <button
-                onClick={openScanModal}
-                className="px-6 bg-zinc-700 rounded-lg cursor-pointer hover:bg-zinc-100/80 hover:text-black flex items-center transition-all text-center py-1.5"
-              >
-                Scan
-                <FaCamera className="ml-2 text-xl" />
-              </button>
-            </div>
+    <div className="w-full h-full flex flex-col">
+      <div className="w-full flex justify-between items-center p-4">
+        <div className="flex items-center gap-2">
+          <Link to={`/manage/${id}`} className="text-gray-600 hover:text-gray-800">
+            <RiBox3Fill size={24} />
+          </Link>
+          <h1 className="text-2xl font-semibold">Check-in</h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by email"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <IoIosSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           </div>
-
-          <div className="w-full flex flex-col gap-2">
-            <div className="flex gap-2 items-center justify-between w-full">
-              <IoIosSearch className="p-1 bg-zinc-800 border border-zinc-200/20 text-4xl rounded-lg" />
-              <input
-                type="text"
-                className="w-full px-4 py-1.5 my-3 text-zinc-200 rounded-lg outline-none focus:border border-[1px] border-zinc-200/20 bg-zinc-800"
-                placeholder="Search in guests ..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            {filteredGuests.map((guest, index) => (
-              <div key={index} onClick={() => handleGuestItemClick(guest)}>
-                <GuestListItem
-                  name={guest.name}
-                  email={guest.email}
-                  time={guest.time}
-                  status={guest.approveStatus}
-                />
-              </div>
-            ))}
-          </div>
+          <button
+            onClick={openScanModal}
+            className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            <FaCamera size={20} />
+            Scan QR
+          </button>
+          <CSVLink {...exportData}>
+            <button className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+              <PiExport size={20} />
+              Export
+            </button>
+          </CSVLink>
         </div>
       </div>
-      {selectedGuest && (
-        <GuestDetailsPopup guest={selectedGuest} onClose={closePopup} />
-      )}
+
+      <div className="flex-1 overflow-y-auto p-4">
+        {filteredGuests && filteredGuests.map((guest) => (
+          <GuestListItem
+            key={guest._id}
+            guest={guest}
+            onSelect={() => setSelectedGuest(guest)}
+          />
+        ))}
+      </div>
 
       {isScanModalOpen && (
-        <div className="fixed inset-0 w-full z-10 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black opacity-75"
-            onClick={closeScanModal}
-          ></div>
-          <div className="z-20 w-2/6 flex flex-col bg-white p-4 rounded-lg shadow-md">
-            <h1 className="text-black">{data}</h1>
-            <QrReader
-              // delay={300}
-              facingMode={"environment"}
-              // onError={this.handleError}
-              onScan={handleScan}
-              onError={handleError}
-              style={{ width: "100%" }}
-            />
-            <button
-              className="mt-4 p-2 bg-zinc-700 text-white rounded-md"
-              onClick={closeScanModal}
-            >
-              Close Scan
-            </button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg w-[500px]">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Scan QR Code</h2>
+              <button
+                onClick={closeScanModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="w-full aspect-square">
+              <Html5QrcodeScanner
+                fps={10}
+                qrbox={250}
+                onResult={handleScan}
+                onError={(err) => console.error(err)}
+              />
+            </div>
           </div>
         </div>
       )}
-    </>
+
+      {selectedGuest && (
+        <GuestDetailsPopup
+          guest={selectedGuest}
+          onClose={closePopup}
+        />
+      )}
+    </div>
   );
 };
 
