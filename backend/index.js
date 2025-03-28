@@ -11,12 +11,7 @@ import jwt from 'jsonwebtoken';
 
 const app = express();
 app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://re-event-backend.onrender.com',
-        'https://rvent.vercel.app',
-        'https://re-event-1.onrender.com'  // Add your new Render URL
-    ],
+    origin: ['http://localhost:5173', 'https://re-event-1.onrender.com','https://rvent.vercel.app'],
     credentials: true,
 }));
 app.use(express.json());
@@ -48,23 +43,12 @@ app.use('/events', eventRoutes);
 
 
 
-// MongoDB connection with retry logic
-const connectWithRetry = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 5000,
-            retryWrites: true,
-            w: 'majority'
-        });
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => {
         console.log('Connected to MongoDB 🥳');
         app.listen(port, () => console.log(`Server listening on port ${port}!`));
-    } catch (err) {
+    })
+    .catch((err) => {
         console.error('MongoDB connection error:', err.message);
-        console.log('Retrying connection in 5 seconds...');
-        setTimeout(connectWithRetry, 5000);
-    }
-};
-
-connectWithRetry();
+        process.exit(1); // Exit the process if MongoDB connection fails
+    });
