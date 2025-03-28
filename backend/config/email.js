@@ -3,29 +3,27 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Verify environment variables
+// Verify required environment variables
 if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || !process.env.EMAIL_FROM) {
-  console.error('Missing required email environment variables');
-  console.error('EMAIL_USER:', process.env.EMAIL_USER ? 'Set' : 'Missing');
-  console.error('EMAIL_PASS:', process.env.EMAIL_PASS ? 'Set' : 'Missing');
-  console.error('EMAIL_FROM:', process.env.EMAIL_FROM ? 'Set' : 'Missing');
-  throw new Error('Missing required email environment variables');
+  console.error('Missing required email environment variables:');
+  if (!process.env.EMAIL_USER) console.error('- EMAIL_USER is missing');
+  if (!process.env.EMAIL_PASS) console.error('- EMAIL_PASS is missing');
+  if (!process.env.EMAIL_FROM) console.error('- EMAIL_FROM is missing');
+  process.exit(1);
 }
 
+// Create transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false
+    pass: process.env.EMAIL_PASS
   },
   debug: true // Enable debug logging
 });
 
 // Verify transporter configuration
-transporter.verify((error, success) => {
+transporter.verify(function(error, success) {
   if (error) {
     console.error('Transporter verification failed:', error);
     console.error('Error details:', {
@@ -35,8 +33,8 @@ transporter.verify((error, success) => {
       responseCode: error.responseCode
     });
   } else {
-    console.log('Transporter verification successful');
-    console.log('Server is ready to send emails');
+    console.log('Server is ready to take our messages');
+    console.log('Using email account:', process.env.EMAIL_USER);
   }
 });
 
@@ -46,7 +44,7 @@ export const sendEmail = async (to, subject, html) => {
     console.log('Using email account:', process.env.EMAIL_USER);
 
     const mailOptions = {
-      from: `"Re:Event" <${process.env.EMAIL_FROM}>`,
+      from: process.env.EMAIL_FROM,
       to,
       subject,
       html
@@ -54,7 +52,7 @@ export const sendEmail = async (to, subject, html) => {
 
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent successfully:', info.messageId);
-    return true;
+    return info;
   } catch (error) {
     console.error('Error sending email:', error);
     console.error('Error details:', {
@@ -64,24 +62,20 @@ export const sendEmail = async (to, subject, html) => {
       responseCode: error.responseCode,
       stack: error.stack
     });
-    throw new Error(`Failed to send email: ${error.message}`);
+    throw error;
   }
 };
 
 export const sendOtpEmail = async (email, otp) => {
-  const subject = 'Re:Event - Login OTP';
+  const subject = 'Your OTP for Re-Event Login';
   const html = `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-      <h2 style="color: #333;">Your OTP for Re:Event Login</h2>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #333;">Your OTP for Re-Event Login</h2>
       <p>Hello,</p>
-      <p>Your OTP for logging into Re:Event is:</p>
-      <div style="background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; margin: 20px 0;">
-        ${otp}
-      </div>
-      <p>This OTP will expire in 5 minutes.</p>
+      <p>Your OTP for login is: <strong style="font-size: 24px; color: #007bff;">${otp}</strong></p>
+      <p>This OTP will expire in 10 minutes.</p>
       <p>If you didn't request this OTP, please ignore this email.</p>
-      <hr style="border: 1px solid #eee; margin: 20px 0;">
-      <p style="color: #666; font-size: 12px;">This is an automated message, please do not reply.</p>
+      <p>Best regards,<br>Re-Event Team</p>
     </div>
   `;
 

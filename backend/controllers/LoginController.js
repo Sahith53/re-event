@@ -23,6 +23,7 @@ export const sendOtp = async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
+      console.error('Email is missing in request body');
       return res.status(400).json({ 
         error: 'Email is required',
         details: 'Please provide an email address'
@@ -35,23 +36,34 @@ export const sendOtp = async (req, res) => {
     let otp;
 
     if (existingOtp) {
+      console.log('Found existing OTP for email:', email);
       otp = await generateUniqueOtp();
       existingOtp.otp = otp;
       await existingOtp.save();
+      console.log('Updated existing OTP');
     } else {
+      console.log('Creating new OTP for email:', email);
       otp = await generateUniqueOtp();
       const newOtp = new OtpModel({ email, otp });
       await newOtp.save();
+      console.log('Created new OTP');
     }
 
     console.log('Generated OTP:', otp);
     
     try {
+      console.log('Attempting to send email...');
       await sendOtpEmail(email, otp);
       console.log('OTP sent successfully to:', email);
       res.status(200).json({ message: 'OTP sent successfully' });
     } catch (emailError) {
       console.error('Error sending email:', emailError);
+      console.error('Email error details:', {
+        code: emailError.code,
+        command: emailError.command,
+        response: emailError.response,
+        responseCode: emailError.responseCode
+      });
       res.status(500).json({ 
         error: 'Failed to send OTP email',
         details: emailError.message
@@ -59,6 +71,10 @@ export const sendOtp = async (req, res) => {
     }
   } catch (error) {
     console.error('Error in sendOtp:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack
+    });
     res.status(500).json({ 
       error: 'Failed to send OTP',
       details: error.message
