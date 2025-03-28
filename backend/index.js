@@ -14,8 +14,15 @@ import LoginController from "./controllers/LoginController.js";
 
 const app = express();
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://re-event-1.onrender.com', 'https://re-event-orcin.vercel.app'],
+    origin: [
+        'http://localhost:5173',
+        'https://re-event-1.onrender.com',
+        'https://re-event-orcin.vercel.app',
+        'https://re-event-backend.onrender.com'
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(session({
