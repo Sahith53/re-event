@@ -10,6 +10,8 @@ import { useMainDashContext } from "../../context/AppContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const LogSign = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,7 +47,7 @@ const LogSign = () => {
       };
 
       const response = await axios.get(
-        "https://re-event-1.onrender.com/login/me2",
+        `${API_URL}/login/me2`,
         config
       );
       
@@ -70,7 +72,7 @@ const LogSign = () => {
 
     try {
       const response = await axios.post(
-        "https://re-event-1.onrender.com/login/send-otp",
+        `${API_URL}/login/send-otp`,
         { email }
       );
       
@@ -92,16 +94,16 @@ const LogSign = () => {
   const handleOtpSubmitForm = async () => {
     try {
       console.log(otp, email);
-      const checker = await axios.post(
-        "https://re-event-1.onrender.com/login/verify-otp",
+      const response = await axios.post(
+        `${API_URL}/login/verify-otp`,
         { otp, email }
       );
-      const token = checker.data.token;
-      const user = checker.data.user;
+      const token = response.data.token;
+      const user = response.data.user;
 
       Cookies.set("token", token, { expires: 1 / 24 });
 
-      toast.success(checker.data.message); // Update this line to use the correct property
+      toast.success(response.data.message); // Update this line to use the correct property
 
       const config = {
         headers: {
@@ -109,14 +111,14 @@ const LogSign = () => {
         },
       };
 
-      const response = await axios.get(
-        "https://re-event-1.onrender.com/login/me2",
+      const userResponse = await axios.get(
+        `${API_URL}/login/me2`,
         config
       );
-      setCookie("user", response.data, { path: "/" });
-      setProfile(response.data);
+      setCookie("user", userResponse.data, { path: "/" });
+      setProfile(userResponse.data);
       // console.log(response.data.decodedjwt.user);
-      if (response.data.decodedjwt.user === null) {
+      if (userResponse.data.decodedjwt.user === null) {
         toast.info("Please set your username");
         setAskuserName(true);
       }
@@ -126,6 +128,54 @@ const LogSign = () => {
     } catch (error) {
       toast.error(error.response.data.message); // Update this line to use the correct property
       setMessage(error.response.data.message);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${API_URL}/login/google`;
+  };
+
+  const handleSendOtp = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/login/send-otp`, {
+        email,
+      });
+      if (response.data.success) {
+        setOncontinue(true);
+        toast.success("OTP sent successfully");
+      } else {
+        toast.error("Failed to send OTP");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to send OTP");
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/login/verify-otp`, {
+        email,
+        otp,
+      });
+      if (response.data.success) {
+        const token = response.data.token;
+        Cookies.set("token", token, { expires: 1 / 24 });
+        const userResponse = await axios.get(`${API_URL}/login/me2`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const decodedJwtString = JSON.stringify(userResponse.data);
+        Cookies.set("user", decodedJwtString, { expires: 1 / 24 });
+        toast.success("Login successful");
+        setAskuserName(true);
+      } else {
+        toast.error("Invalid OTP");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to verify OTP");
     }
   };
 
@@ -176,7 +226,7 @@ const LogSign = () => {
                   <hr className="    border-gray-400  " />
                   <button 
                     className="rounded-md flex bg-[#212325] border-white/30 border px-8 py-2 items-center justify-center gap-2"
-                    onClick={() => window.location.href = 'https://re-event-1.onrender.com/login/google'}
+                    onClick={handleGoogleLogin}
                   >
                     <FaGoogle className="text-gray-200" />
                     <h1 className="text-gray-200">Continue with Google</h1>
@@ -231,7 +281,7 @@ const LogSign = () => {
                         type="submit"
                         // onClick={handleSubmit}
                         className="mt-4 border bg-gray-600 border-gray-500 text-white py-2 px-4 rounded-md shadow-md font-semibold tracking-wider"
-                        onClick={handleOtpSubmitForm}
+                        onClick={handleVerifyOtp}
                       >
                         Verify & Login
                       </button>

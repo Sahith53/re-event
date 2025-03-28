@@ -19,7 +19,7 @@ const formatDate = (dateString) => {
   const options = { day: "numeric", month: "short", year: "numeric" };
   const formattedDate = new Date(dateString).toLocaleDateString(
     "en-US",
-    options
+    options 
   );
   return formattedDate;
 };
@@ -119,10 +119,10 @@ const Dashboard = () => {
       }
 
       // Send the request to set the username
-      const response = await axios.post("https://re-event-1.onrender.com/login/setusername", { username, uid });
+      const response = await axios.post(`${API_URL}/login/setusername`, { username, uid });
 
       if (response.data.success) {
-        const updatedResponse = await axios.get("https://re-event-1.onrender.com/login/me2", {
+        const updatedResponse = await axios.get(`${API_URL}/login/me2`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -133,14 +133,11 @@ const Dashboard = () => {
         Cookies.set("user", decodedJwtString, { expires: 1 / 24 });
         toast.success("Username set successfully");
         setAskuserName(false);
-        // setProfile(updatedResponse.data);
       } else {
         toast.error("Failed to set username");
-        // console.error("Failed to set username");
       }
     } catch (error) {
       toast.error(error.response.data.message || "Failed to set username");
-      // console.error("Error while setting username:", error.message);
     }
   };
   const groupedUpcomingEvents = groupEventsByDate(upcomingEvents);

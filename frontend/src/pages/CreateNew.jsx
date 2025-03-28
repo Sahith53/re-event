@@ -21,6 +21,8 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import classnames from "classnames";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const CreateNew = (props) => {
   const navigate = useNavigate();
   const imgID = nanoid(10);
@@ -68,54 +70,41 @@ const CreateNew = (props) => {
       toast.error("Failed to upload image");
     }
   };
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       const response = await axios.post(
-        "https://re-event-1.onrender.com/events/newevent",
+        `${API_URL}/events/newevent`,
         {
-          ...newevent,
+          eventname: newevent.eventname,
+          eventdate: newevent.eventdate,
+          eventtime: newevent.eventtime,
+          eventlocation: newevent.eventlocation,
           eventcreatedby: email1,
+          description: newevent.description,
+          eventbanner: newevent.eventbanner,
+          eventcode: newevent.eventcode,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user.decodedjwt.token}`,
+          },
         }
       );
-      console.log(response);
-      console.log("Event created:", response.data);
-      toast.success("Event created successfully");
-      console.log(response.data);
-      addEventToCreatorUser(email1, response.data.eventcode);
-      navigate(`/manage/${response.data.eventcode}`);
 
-      setNewEvent({
-        eventname: "",
-        eventdate: "",
-        eventtime: "",
-        eventbanner: "",
-        description: "",
-        eventlocation: "",
-        eventcreatedby: "",
-        eventtype: "online",
-        registrationstatus: "open",
-        eventstatus: "upcoming",
-        eventurl: "",
-        eventticketprice: "",
-        visibility: "",
-        questions: [],
-        registeredusers: [],
-      });
+      if (response.data.success) {
+        await axios.post(`${API_URL}/events/addeventtocreatoruser`, {
+          eventcode: response.data.eventcode,
+          email: user.decodedjwt.decode.email,
+        });
+        toast.success("Event created successfully");
+        navigate("/dashboard");
+      } else {
+        toast.error("Failed to create event");
+      }
     } catch (error) {
-      console.error("Error creating event:", error);
-      toast.error("Failed to create event");
-    }
-  };
-
-  const addEventToCreatorUser = async (creatorId, eventcode) => {
-    try {
-      await axios.post("https://re-event-1.onrender.com/events/addeventtocreatoruser", {
-        creatorId,
-        eventcode,
-      });
-      console.log("Event added to the creator user successfully");
-    } catch (error) {
-      console.error("Error adding event to creator user:", error);
+      console.error("Error:", error);
+      toast.error(error.response?.data?.message || "Failed to create event");
     }
   };
 
