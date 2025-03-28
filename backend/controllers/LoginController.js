@@ -243,10 +243,14 @@ router.get('/me2', getProfile2);
 router.post('/setusername', setUsername);
 
 // Google OAuth routes
-router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get("/google", passport.authenticate("google", { 
+  scope: ["profile", "email"],
+  prompt: 'select_account'
+}));
+
 router.get("/google/callback", passport.authenticate("google", {
-  failureRedirect: "https://re-event-orcin.vercel.app/login",
-  successRedirect: "https://re-event-orcin.vercel.app/dashboard"
+  failureRedirect: process.env.FRONTEND_URL + "/login",
+  successRedirect: process.env.FRONTEND_URL + "/dashboard"
 }));
 
 export default router;
