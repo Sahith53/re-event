@@ -7,11 +7,12 @@ import axios from "axios";
 import { CookiesProvider, useCookies } from "react-cookie";
 import Cookies from "js-cookie";
 import { useMainDashContext } from "../../context/AppContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const LogSign = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { profile, setProfile, askuserName, setAskuserName } =
     useMainDashContext();
@@ -24,28 +25,63 @@ const LogSign = () => {
   const [mailloading, setMailloading] = useState(false);
   // const [askuserName, setAskuserName] = useState(false);
 
+  useEffect(() => {
+    // Check for token in URL parameters (Google auth callback)
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    if (token) {
+      handleGoogleAuthSuccess(token);
+    }
+  }, [location]);
+
+  const handleGoogleAuthSuccess = async (token) => {
+    try {
+      Cookies.set("token", token, { expires: 1 / 24 });
+      
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const response = await axios.get(
+        "https://re-event-1.onrender.com/login/me2",
+        config
+      );
+      
+      setCookie("user", response.data, { path: "/" });
+      setProfile(response.data);
+      
+      if (response.data.decodedjwt.user === null) {
+        toast.info("Please set your username");
+        setAskuserName(true);
+      }
+
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Authentication failed");
+    }
+  };
+
   const handleSubmitForm = async (e) => {
     e.preventDefault(); // Prevents the default form submission behavior
     setOncontinue(true);
-
-    const promise = () =>
-    new Promise((resolve) => setTimeout(() => resolve({ name: "Sonner" }), 2000));
+    setMailloading(true);
 
     try {
-   toast.promise(promise, {
-      loading: `Sending OTP to ${email}...`,
-      error: "Error",
-      success: "OTP sent successfully",
-    });
       const response = await axios.post(
-        "https://re-event-backend.onrender.com/login/send-otp",
+        "https://re-event-1.onrender.com/login/send-otp",
         { email }
-      )
-    
+      );
+      
+      toast.success('OTP sent successfully');
       setMessage(response.data);
     } catch (error) {
-      toast.error(error.response.data);
-      setMessage(error.response.data);
+      console.error('Error sending OTP:', error);
+      toast.error(error.response?.data?.error || 'Failed to send OTP. Please try again.');
+      setMessage(error.response?.data?.error || 'Failed to send OTP');
+    } finally {
+      setMailloading(false);
     }
   };
 
@@ -57,7 +93,7 @@ const LogSign = () => {
     try {
       console.log(otp, email);
       const checker = await axios.post(
-        "https://re-event-backend.onrender.com/login/verify-otp",
+        "https://re-event-1.onrender.com/login/verify-otp",
         { otp, email }
       );
       const token = checker.data.token;
@@ -74,7 +110,7 @@ const LogSign = () => {
       };
 
       const response = await axios.get(
-        "https://re-event-backend.onrender.com/login/me2",
+        "https://re-event-1.onrender.com/login/me2",
         config
       );
       setCookie("user", response.data, { path: "/" });
@@ -138,9 +174,12 @@ const LogSign = () => {
                     Continue with Email
                   </button>
                   <hr className="    border-gray-400  " />
-                  <button className=" rounded-md flex bg-[#212325] border-white/30 border px-8 py-2 items-center justify-center gap-2">
+                  <button 
+                    className="rounded-md flex bg-[#212325] border-white/30 border px-8 py-2 items-center justify-center gap-2"
+                    onClick={() => window.location.href = 'https://re-event-1.onrender.com/login/google'}
+                  >
                     <FaGoogle className="text-gray-200" />
-                    <h1 className="    text-gray-200 ">Continue with Google</h1>
+                    <h1 className="text-gray-200">Continue with Google</h1>
                   </button>
                 </form>
               </div>

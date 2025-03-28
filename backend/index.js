@@ -8,10 +8,13 @@ import cors from 'cors';
 // import express from 'express';
 import session from 'express-session';
 import jwt from 'jsonwebtoken';
+import passport from './config/passport.js';
+import eventRoutes from './routes/eventRoutes.js';
+import LoginController from "./controllers/LoginController.js";
 
 const app = express();
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://re-event-1.onrender.com','https://rvent.vercel.app'],
+    origin: ['http://localhost:5173', 'https://re-event-1.onrender.com', 'https://re-event-orcin.vercel.app'],
     credentials: true,
 }));
 app.use(express.json());
@@ -25,23 +28,13 @@ app.use(session({
     },
 }));
 
-//changed
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
-import eventRoutes from './routes/eventRoutes.js';
-
-app.use(express.json());
-
-
-
-
-
-app.use('/', router);
-app.use('/login', router);
-app.use('/events', eventRoutes);
-
-
-
-
+// Routes
+app.use('/api/events', eventRoutes);
+app.use('/login', LoginController); // Use only LoginController for login routes
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {

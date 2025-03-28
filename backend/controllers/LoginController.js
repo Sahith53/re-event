@@ -4,6 +4,8 @@ import UserModel from '../models/user.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { sendOtpEmail } from '../config/email.js';
+import passport from 'passport';
+import { Router } from 'express';
 
 dotenv.config();
 
@@ -17,9 +19,16 @@ const generateUniqueOtp = async () => {
 };
 
 export const sendOtp = async (req, res) => {
-  const { email } = req.body;
-
   try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ 
+        error: 'Email is required',
+        details: 'Please provide an email address'
+      });
+    }
+
     console.log('Sending OTP to:', email);
     
     const existingOtp = await OtpModel.findOne({ email });
@@ -36,13 +45,24 @@ export const sendOtp = async (req, res) => {
     }
 
     console.log('Generated OTP:', otp);
-    await sendOtpEmail(email, otp);
-    console.log('OTP sent successfully to:', email);
-
-    res.status(200).json({ message: 'OTP sent successfully' });
+    
+    try {
+      await sendOtpEmail(email, otp);
+      console.log('OTP sent successfully to:', email);
+      res.status(200).json({ message: 'OTP sent successfully' });
+    } catch (emailError) {
+      console.error('Error sending email:', emailError);
+      res.status(500).json({ 
+        error: 'Failed to send OTP email',
+        details: emailError.message
+      });
+    }
   } catch (error) {
     console.error('Error in sendOtp:', error);
-    res.status(500).json({ error: 'Failed to send OTP', details: error.message });
+    res.status(500).json({ 
+      error: 'Failed to send OTP',
+      details: error.message
+    });
   }
 };
 
@@ -195,3 +215,22 @@ export const setUsername = async (req, res) => {
     });
   }
 };
+
+// Create router
+const router = Router();
+
+// OTP routes
+router.post('/sendotp', sendOtp);
+router.post('/verifyotp', verifyOtp);
+router.get('/me', getProfile);
+router.get('/me2', getProfile2);
+router.post('/setusername', setUsername);
+
+// Google OAuth routes
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+router.get("/google/callback", passport.authenticate("google", {
+  failureRedirect: "https://re-event-orcin.vercel.app/login",
+  successRedirect: "https://re-event-orcin.vercel.app/dashboard"
+}));
+
+export default router;
