@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
-const port = 3000;
+const port = process.env.PORT || 3000;
 import mongoose from 'mongoose';
 import router from './routes/route.js';
 import cors from 'cors';
@@ -11,15 +11,23 @@ import jwt from 'jsonwebtoken';
 
 const app = express();
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://re-event-backend.onrender.com','https://rvent.vercel.app'],
+    origin: [
+        'http://localhost:5173',
+        'https://re-event-backend.onrender.com',
+        'https://rvent.vercel.app',
+        'https://re-event-1.onrender.com'  // Add your new Render URL
+    ],
     credentials: true,
 }));
 app.use(express.json());
 app.use(session({
-    secret: 'your_secret_key', // Replace with a strong secret key
+    secret: process.env.SESSION_SECRET || 'your_secret_key',
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false },
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'none'
+    },
 }));
 
 //changed
@@ -40,11 +48,23 @@ app.use('/events', eventRoutes);
 
 
 
-mongoose.connect(process.env.MONGO_URI).then(() => {
-    console.log('Connected to MongoDB 🥳');
-}).catch((err) => {
-    console.log(err);
-}
-);
+// MongoDB connection with retry logic
+const connectWithRetry = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000,
+            retryWrites: true,
+            w: 'majority'
+        });
+        console.log('Connected to MongoDB 🥳');
+        app.listen(port, () => console.log(`Server listening on port ${port}!`));
+    } catch (err) {
+        console.error('MongoDB connection error:', err.message);
+        console.log('Retrying connection in 5 seconds...');
+        setTimeout(connectWithRetry, 5000);
+    }
+};
 
-app.listen(port, () => console.log(`yowamio listening on port ${port}!`));
+connectWithRetry();

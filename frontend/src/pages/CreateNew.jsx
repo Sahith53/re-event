@@ -28,9 +28,9 @@ const CreateNew = (props) => {
   const { newevent, setNewEvent } = useMainDashContext();
   const { width, saveName, mt } = props;
   const imagekit = new ImageKit({
-    publicKey: "public_2rLWcPMCq/TpjA/J9rqwkH8YLNU=",
-    privateKey: "private_cz09upy0twlhYcqaCnHidFizWKo=",
-    urlEndpoint: "https://ik.imagekit.io/vsnlabs",
+    publicKey: "public_rSIp5dGemSzNKWCbcNSerbZu+Zk=",
+    privateKey: "private_J9DBZm82PmYEjdN5DFxbuqDShyg=",
+    urlEndpoint: "https://ik.imagekit.io/Sahithchowdary",
     transformationPosition: "path",
     authenticationEndpoint: "http://localhost:5000/imagekit",
   });
