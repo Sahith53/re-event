@@ -6,7 +6,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://re-event-1.onrender.com
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
   withCredentials: true,
   timeout: 30000, // 30 second timeout
@@ -37,6 +38,13 @@ api.interceptors.response.use(
     if (!error.response) {
       return Promise.reject(new Error('Network error. Please check your connection.'));
     }
+
+    // Log the error details for debugging
+    console.error('API Error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      headers: error.response?.headers
+    });
 
     return Promise.reject(error);
   }

@@ -25,17 +25,18 @@ const app = express();
 // Add this line before other middleware
 app.set('trust proxy', 1);
 
-// Basic middleware
+// Configure CORS
 app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://re-event-1.onrender.com',
-        'https://re-event-orcin.vercel.app'
-    ],
-    credentials: true,
+    origin: ['http://localhost:5173', 'https://re-event-1.onrender.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 app.use(express.json({ limit: '10kb' }));
 app.use(mongoSanitize());
