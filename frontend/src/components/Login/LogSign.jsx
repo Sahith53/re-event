@@ -36,52 +36,75 @@ const LogSign = ({ isModal = false }) => {
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
-    setOncontinue(true);
+    setMailloading(true);
+    setMessage("");
 
     try {
-      toast.loading(`Sending OTP to ${email}...`);
-      const response = await api.post('/login/send-otp', { email });
+      const toastId = toast.loading(`Sending OTP to ${email}...`);
       
+      const response = await api.post('/api/otp/generate', { 
+        email,
+        redirectUrl: window.location.origin 
+      });
+      
+      toast.dismiss(toastId);
       toast.success('OTP sent successfully');
       setMessage(response.data);
+      setOncontinue(true);
     } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to send OTP");
-      setMessage(error.response?.data?.error || "Failed to send OTP");
+      console.error('OTP Send Error:', error);
+      const errorMessage = error.response?.data?.error || error.message || "Failed to send OTP";
+      toast.error(errorMessage);
+      setMessage(errorMessage);
+    } finally {
+      setMailloading(false);
     }
   };
 
   const handleOtpSubmitForm = async () => {
     try {
-      const checker = await api.post('/login/verify-otp', { otp, email });
-      const token = checker.data.token;
-      const user = checker.data.user;
-
-      Cookies.set("token", token, { expires: 1 / 24 });
-      toast.success(checker.data.message);
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
-      const response = await axios.get(
-        `${API_URL}/login/me2`,
-        config
-      );
+      const response = await api.post('/api/otp/verify', { 
+        email, 
+        otp 
+      });
       
-      setCookie("user", response.data, { path: "/" });
-      setProfile(response.data);
+      const { token, user } = response.data;
+      
+      // Set token with proper expiration
+      Cookies.set("token", token, { 
+        expires: 1 / 24, // 1 hour
+        secure: true,
+        sameSite: 'strict'
+      });
 
-      if (response.data.decodedjwt.user === null) {
+      toast.success('Login successful');
+      
+      // Set user cookie with proper expiration
+      setCookie("user", user, { 
+        path: "/",
+        expires: 1 / 24, // 1 hour
+        secure: true,
+        sameSite: 'strict'
+      });
+      
+      setProfile(user);
+
+      if (user.decodedjwt?.user === null) {
         toast.info("Please set your username");
         setAskuserName(true);
       }
 
+      // Close modal if it's a modal login
+      if (isModal && setOpenlogin) {
+        setOpenlogin(false);
+      }
+
       navigate("/dashboard");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Verification failed");
-      setMessage(error.response?.data?.message || "Verification failed");
+      console.error('OTP Verification Error:', error);
+      const errorMessage = error.response?.data?.message || "Verification failed";
+      toast.error(errorMessage);
+      setMessage(errorMessage);
     }
   };
 
@@ -204,6 +227,11 @@ const LogSign = ({ isModal = false }) => {
             transition={{ duration: 0.3 }}
           >
             {renderLoginContent()}
+            {message && (
+              <div className="mt-4 text-sm text-red-400 text-center">
+                {message}
+              </div>
+            )}
           </motion.div>
         </div>
       ) : (
@@ -216,6 +244,11 @@ const LogSign = ({ isModal = false }) => {
             transition={{ duration: 0.3 }}
           >
             {renderLoginContent()}
+            {message && (
+              <div className="mt-4 text-sm text-red-400 text-center">
+                {message}
+              </div>
+            )}
           </motion.div>
         </div>
       )}

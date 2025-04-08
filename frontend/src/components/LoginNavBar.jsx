@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RiBox3Fill } from "react-icons/ri";
 import { useMainDashContext } from "./../context/AppContext";
 import Cookies from "js-cookie";
@@ -8,6 +8,7 @@ const LoginNavbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { openlogin, setOpenlogin } = useMainDashContext();
   const [openProfile, setOpenProfile] = useState(false);
+  const navigate = useNavigate();
   // const [modifiedEmail1, setModifiedEmail] = useState("");
 
   // const { profile, setProfile } = useMainDashContext();
@@ -45,6 +46,25 @@ const LoginNavbar = () => {
 
   const handleProfileClick = () => {
     setOpenProfile(!openProfile);
+  };
+
+  const handleLogout = () => {
+    // Clear all auth-related cookies
+    Cookies.remove("user", { path: "/" });
+    Cookies.remove("token", { path: "/" });
+    
+    // Clear any other related data
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Close profile menu
+    setOpenProfile(false);
+    
+    // Navigate to home page
+    navigate("/");
+    
+    // Force a hard reload to clear all state
+    window.location.reload();
   };
   //   }
 
@@ -101,11 +121,7 @@ const LoginNavbar = () => {
                   </h1>
                   <h1
                     className="hover:bg-zinc-700/70 w-full cursor-pointer py-1 px-2 rounded-lg hover:text-zinc-300"
-                    onClick={() => {
-                      Cookies.remove("user");
-                      Cookies.remove("token");
-                      window.location.reload();
-                    }}
+                    onClick={handleLogout}
                   >
                     Logout
                   </h1>

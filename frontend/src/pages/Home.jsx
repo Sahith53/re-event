@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import HeroSection from "../components/HeroSection";
 import Details from "../components/Details";
 import LogSign from "../components/Login/LogSign";
@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 
 const Home = () => {
   const cookie = Cookies.get("user");
-  const { openlogin, setOpenlogin } = useMainDashContext();
+  const { openlogin } = useMainDashContext();
   
   return (
     <>
