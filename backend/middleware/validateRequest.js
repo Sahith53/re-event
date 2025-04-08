@@ -23,7 +23,7 @@ export const schemas = {
         }),
         verify: Joi.object({
             email: Joi.string().email().required(),
-            otp: Joi.string().length(4).pattern(/^\d+$/).required()
+            otp: Joi.string().length(6).pattern(/^\d+$/).required()
         })
     },
     user: {
