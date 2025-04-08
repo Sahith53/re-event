@@ -51,12 +51,12 @@ export const otpSchema = {
     verify: Joi.object({
         email: Joi.string().email().required(),
         otp: Joi.string()
-            .length(4)
+            .length(5)
             .pattern(/^[0-9]+$/)
             .required()
             .messages({
                 'string.pattern.base': 'OTP must contain only numbers',
-                'string.length': 'OTP must be 4 digits long'
+                'string.length': 'OTP must be 5 digits long'
             })
     })
 };

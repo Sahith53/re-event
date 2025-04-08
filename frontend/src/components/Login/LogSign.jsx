@@ -43,17 +43,19 @@ const LogSign = ({ isModal = false }) => {
       const toastId = toast.loading(`Sending OTP to ${email}...`);
       
       const response = await api.post('/api/otp/generate', { 
-        email,
-        redirectUrl: window.location.origin 
+        email
       });
       
       toast.dismiss(toastId);
       toast.success('OTP sent successfully');
-      setMessage(response.data);
+      setMessage(response.data.message || 'OTP sent successfully');
       setOncontinue(true);
     } catch (error) {
       console.error('OTP Send Error:', error);
-      const errorMessage = error.response?.data?.error || error.message || "Failed to send OTP";
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          "Failed to send OTP";
       toast.error(errorMessage);
       setMessage(errorMessage);
     } finally {
@@ -102,7 +104,10 @@ const LogSign = ({ isModal = false }) => {
       navigate("/dashboard");
     } catch (error) {
       console.error('OTP Verification Error:', error);
-      const errorMessage = error.response?.data?.message || "Verification failed";
+      const errorMessage = error.response?.data?.message || 
+                          error.response?.data?.error || 
+                          error.message || 
+                          "Verification failed";
       toast.error(errorMessage);
       setMessage(errorMessage);
     }

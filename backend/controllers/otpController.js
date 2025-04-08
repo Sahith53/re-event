@@ -8,8 +8,8 @@ export const generateOTP = async (req, res, next) => {
     try {
         const { email } = req.body;
         
-        // Generate a 4-digit numeric OTP
-        const generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
+        // Generate a 5-digit numeric OTP
+        const generatedOTP = Math.floor(10000 + Math.random() * 90000).toString();
 
         // Store the OTP
         try {
