@@ -22,6 +22,9 @@ import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 
+// Add this line before other middleware
+app.set('trust proxy', 1);
+
 // Basic middleware
 app.use(cors({
     origin: [
