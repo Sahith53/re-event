@@ -17,22 +17,17 @@ import LoginNavbar from "./components/LoginNavBar";
 import Checkin from './components/Manage/Checkin/Checkin';
 import axios from 'axios';
 import SmallProfile from "./components/Login/SmallProfile";
-
 import Profile from './pages/Profile';
-
-
-
+import LogSign from './components/Login/LogSign';
 
 function App() {
   const location = useLocation();
   const { profile, setProfile } = useMainDashContext();
 
-
   const hideNavbar = ['/manage/', '/create'];
   const shouldHideNavbar = hideNavbar.some((path) => location.pathname.includes(path));
   const hideFooter = ['/checkin'];
   const shouldHideFooter = hideFooter.some((path) => location.pathname.includes(path));
-
 
   const cookie = Cookies.get("user");
 
@@ -53,10 +48,9 @@ function App() {
                 <Route path="/manage/:id" element={<ManageEvent />} />
                 <Route path="/e/:id" element={<EventPage />} />
                 <Route path="/manage/:id/checkin" element={<Checkin />} />
-                {/* <Route path="/manage" element={<EventConfrom/>} /> */}
                 <Route path="/manage/:id" element={<ManageEvent />} />
                 <Route path="/profile" element={<Profile />} />
-            </Routes>
+              </Routes>
             </>
           ) : (
             <>
@@ -64,19 +58,17 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/explore" element={<Explore />} />
+                <Route path="/login" element={<LogSign />} />
                 <Route path="*" element={<Home />} />
               </Routes>
             </>
           )
-          // )
         }
 
-        <Toaster position="top-center" richColors   />
+        <Toaster position="top-center" richColors />
       </div>
 
       {!shouldHideFooter ? <Footer /> : null}
-      {/* <Footer /> */}
-
     </>
   );
 }

@@ -5,16 +5,20 @@ import arrow from '../assets/arrow.png';
 import { motion } from 'framer-motion';
 import { TbPhotoEdit } from "react-icons/tb";
 import { MdManageAccounts } from "react-icons/md";
-
+import { useMainDashContext } from "../context/AppContext";
 
 const HeroSection = () => {
   const token = Cookies.get("user");
+  const { setOpenlogin } = useMainDashContext();
+  
+  const handleLoginClick = () => {
+    setOpenlogin(true);
+  };
+
   return (
     <>
       <div className="w-full flex items-center bg-gradient-to-r from-zinc-950 to-zinc-800 justify-center">
-
-        <div className={
-          `w-full max-w-[1600px] items-center lg:py-24 text-white justify-center px-8 lg:px-20 gap-5 md:gap-0 py-10 flex flex-col `}>
+        <div className={`w-full max-w-[1600px] items-center lg:py-24 text-white justify-center px-8 lg:px-20 gap-5 md:gap-0 py-10 flex flex-col `}>
           <div className="w-full flex items-center lg:pt-12 flex-col md:flex-row">
             <div className="flex flex-col gap-4 w-full h-[80vh] md:h-[40vh] lg:w-1/2 p-2 items-center md:items-start justify-center">
               <h1 className="lg:text-8xl herofont text-4xl font-extrabold flex flex-col">
@@ -23,26 +27,35 @@ const HeroSection = () => {
                   Plan your Events.
                 </span>
               </h1>
-              <div className="flex flex-row  items-start gap-4">
+              <div className="flex flex-row items-start gap-4">
                 <div className="flex gap-4 items-start">
                   <img src={arrow} className="w-24 " />
                   <Link
-                    to={token ? "/create-event" : "/"}
+                    to={token ? "/create-event" : "/login"}
                     className="bg-white px-4 py-2 herofont tracking-wide rounded-2xl text-black shadow-lg hover:scale-105 transition-all"
                   >
                     Create
                   </Link>
                 </div>
-                {token && (
+                {token ? (
                   <Link
                     to="/dashboard"
                     className="bg-zinc-800 px-4 py-2 border border-zinc-600/60 rounded-2xl text-white shadow-lg hover:scale-105 transition-all"
                   >
                     Dashboard
                   </Link>
+                ) : (
+                  <button
+                    onClick={handleLoginClick}
+                    className="bg-zinc-800 px-4 py-2 border border-zinc-600/60 rounded-2xl text-white shadow-lg hover:scale-105 transition-all"
+                  >
+                    Login
+                  </button>
                 )}
               </div>
             </div>
+            
+            {/* Rest of the component remains unchanged */}
             <motion.div className="flex w-full lg:w-1/2 flex-col gap-4 lg:p-2"
               initial={{ opacity: 0, y: 100 }}
               animate={{ opacity: 1, y: 0 }}

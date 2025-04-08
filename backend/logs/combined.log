@@ -1,0 +1,19 @@
+{"ip":"::1","level":"info","message":"Event route accessed","method":"POST","path":"/neweventBody","query":{},"timestamp":"2025-04-07T19:47:54.967Z"}
+{"body":"{\r\n    \"email\": \"guthasahithchowdary@gmail.com\",\r\n    \r\n}","expose":true,"level":"error","message":"ERROR 💥 Expected double-quoted property name in JSON at position 56 (line 4 column 1)","stack":"SyntaxError: Expected double-quoted property name in JSON at position 56 (line 4 column 1)\n    at JSON.parse (<anonymous>)\n    at parse (C:\\My Stuff\\projects\\re-event\\backend\\node_modules\\body-parser\\lib\\types\\json.js:92:19)\n    at C:\\My Stuff\\projects\\re-event\\backend\\node_modules\\body-parser\\lib\\read.js:128:18\n    at AsyncResource.runInAsyncScope (node:async_hooks:211:14)\n    at invokeCallback (C:\\My Stuff\\projects\\re-event\\backend\\node_modules\\raw-body\\index.js:238:16)\n    at done (C:\\My Stuff\\projects\\re-event\\backend\\node_modules\\raw-body\\index.js:227:7)\n    at IncomingMessage.onEnd (C:\\My Stuff\\projects\\re-event\\backend\\node_modules\\raw-body\\index.js:287:7)\n    at IncomingMessage.emit (node:events:524:28)\n    at endReadableNT (node:internal/streams/readable:1698:12)\n    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)","status":400,"statusCode":400,"timestamp":"2025-04-07T20:20:31.104Z","type":"entity.parse.failed"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getall","query":{},"timestamp":"2025-04-07T20:40:18.068Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getall","query":{},"timestamp":"2025-04-07T20:44:17.479Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getall","query":{},"timestamp":"2025-04-07T20:48:39.635Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getall","query":{},"timestamp":"2025-04-07T20:52:14.141Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getall","query":{},"timestamp":"2025-04-07T20:52:33.089Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getall","query":{},"timestamp":"2025-04-07T20:53:28.062Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getall","query":{},"timestamp":"2025-04-07T20:54:43.266Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:27.216Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:27.299Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:30.622Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:30.700Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:40.006Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:40.094Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:42.770Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:42.854Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:43.899Z"}
+{"ip":"::1","level":"info","message":"Event route accessed","method":"GET","path":"/getevents","query":{},"timestamp":"2025-04-07T20:59:43.971Z"}

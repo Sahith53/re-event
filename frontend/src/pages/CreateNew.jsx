@@ -74,7 +74,7 @@ const CreateNew = (props) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        `${API_URL}/events/newevent`,
+        `${API_URL}/api/events/newevent`,
         {
           eventname: newevent.eventname,
           eventdate: newevent.eventdate,
@@ -84,6 +84,9 @@ const CreateNew = (props) => {
           description: newevent.description,
           eventbanner: newevent.eventbanner,
           eventcode: newevent.eventcode,
+          visibility: newevent.visibility || 'public',
+          registrationstatus: newevent.registrationstatus || 'open',
+          eventstatus: newevent.eventstatus || 'upcoming',
         },
         {
           headers: {

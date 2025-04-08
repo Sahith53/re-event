@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 const MainDashContext = createContext();
 
@@ -10,7 +11,27 @@ export const MainDashProvider = ({ children }) => {
   const [EventHeader, setEventHeader] = useState("Add Guests");
   const [RegisterClick, setRegisterClick] = useState(false);
 
-  const [profile, setProfile] = useState({});
+  // Add these to your context provider's state
+  const [profile, setProfile] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!Cookies.get("user"));
+  
+  // Add this effect to check authentication on load
+  useEffect(() => {
+    const token = Cookies.get("user");
+    if (token) {
+      try {
+        const userData = JSON.parse(token);
+        setProfile(userData);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("Invalid token format", error);
+        Cookies.remove("user");
+        setIsAuthenticated(false);
+      }
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, []);
   const [editedEvent, setEditedEvent] = useState({});
 
   const [userProfileMenu, setUserprofilemenu] = useState("Myevents");
@@ -57,6 +78,9 @@ export const MainDashProvider = ({ children }) => {
 
         profile,
         setProfile,
+        // Add these to the provider value
+        isAuthenticated,
+        setIsAuthenticated,
 
         newevent,
         setNewEvent,

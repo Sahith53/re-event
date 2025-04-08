@@ -46,6 +46,7 @@ export default defineConfig({
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/re-event-backend\.onrender\.com\/.*/i,
+            // Cache strategy might need optimization
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
