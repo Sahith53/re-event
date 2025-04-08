@@ -188,7 +188,7 @@ const LogSign = ({ isModal = false }) => {
                 <OtpInput
                   value={otp}
                   onChange={setOtp}
-                  numInputs={5}
+                  numInputs={6}
                   renderSeparator={<div className="ml-5"> </div>}
                   renderInput={(props) => <input {...props} />}
                   inputStyle={{

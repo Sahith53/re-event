@@ -2,14 +2,19 @@ import otpGenerator from 'otp-generator';
 import nodemailer from 'nodemailer';
 import redis from '../config/redis.js';
 import { AppError } from '../middleware/errorHandler.js';
-import jwt from 'jsonwebtoken';  // Add this import at the top
+import jwt from 'jsonwebtoken';
+import { sendOtpEmail } from '../config/email.js';
 
 export const generateOTP = async (req, res, next) => {
     try {
         const { email } = req.body;
         
-        // Generate a 5-digit numeric OTP
-        const generatedOTP = Math.floor(10000 + Math.random() * 90000).toString();
+        // Generate a 6-digit numeric OTP using otpGenerator
+        const generatedOTP = otpGenerator.generate(6, {
+            upperCaseAlphabets: false,
+            lowerCaseAlphabets: false,
+            specialChars: false,
+        });
 
         // Store the OTP
         try {
@@ -23,22 +28,9 @@ export const generateOTP = async (req, res, next) => {
             throw new AppError('Failed to store OTP', 500);
         }
 
-        // Send email
+        // Send email using the proper template
         try {
-            const transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS
-                }
-            });
-
-            await transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: email,
-                subject: 'Your OTP for Re-Event',
-                text: `Your OTP is: ${generatedOTP}. Valid for 5 minutes.`
-            });
+            await sendOtpEmail(email, generatedOTP);
         } catch (emailError) {
             throw new AppError('Failed to send OTP email', 500);
         }
