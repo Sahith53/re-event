@@ -30,7 +30,7 @@ app.use(cors({
     origin: [
         'http://localhost:5173',
         'https://re-event-1.onrender.com',
-        'https://re-event-orcin.vercel.app' // <-- Add your Vercel frontend URL here
+        'https://re-event-orcin.vercel.app' // <-- Add this!
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
