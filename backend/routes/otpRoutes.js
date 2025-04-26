@@ -1,11 +1,11 @@
 import express from 'express';
-import { generateOTP, verifyOTP } from '../controllers/otpController.js';
+import { sendOtp, verifyOtp } from '../controllers/LoginController.js';
 import { validateRequest, schemas } from '../middleware/validateRequest.js';
 import { otpLimiter } from '../middleware/rateLimiter.js';
 
 const router = express.Router();
 
-router.post('/generate', otpLimiter, validateRequest(schemas.otp.generate), generateOTP);
-router.post('/verify', validateRequest(schemas.otp.verify), verifyOTP);
+router.post('/generate', otpLimiter, validateRequest(schemas.otp.generate), sendOtp);
+router.post('/verify', validateRequest(schemas.otp.verify), verifyOtp);
 
 export default router;

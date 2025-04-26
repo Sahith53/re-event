@@ -20,6 +20,9 @@ import SmallProfile from "./components/Login/SmallProfile";
 import Profile from './pages/Profile';
 import LogSign from './components/Login/LogSign';
 import { MainDashProvider } from './context/AppContext';
+import { toast } from "sonner";
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 function App() {
   const location = useLocation();
@@ -39,35 +42,54 @@ function App() {
         const cookie = Cookies.get("user");
         const token = Cookies.get("token");
         
-        if (!cookie || !token) {
+        if (!token) {
           setIsAuthenticated(false);
           setIsLoading(false);
           return;
         }
 
         // Validate token with backend
-        const response = await axios.get('/login/validate-token');
+        const response = await axios.get(`${API_URL}/api/auth/validate-token`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
         if (response.data.valid) {
           setIsAuthenticated(true);
-          setProfile(JSON.parse(cookie));
+          setProfile(response.data.user);
         } else {
           // Clear invalid tokens
-          Cookies.remove("user");
           Cookies.remove("token");
+          Cookies.remove("user");
           setIsAuthenticated(false);
+          if (location.pathname !== '/login' && location.pathname !== '/') {
+            toast.error("Session expired. Please login again.");
+            navigate('/login');
+          }
         }
       } catch (error) {
+        console.error('Auth validation error:', error);
         // Clear tokens on error
-        Cookies.remove("user");
         Cookies.remove("token");
+        Cookies.remove("user");
         setIsAuthenticated(false);
+        
+        if (location.pathname !== '/login' && location.pathname !== '/') {
+          if (error.response?.status === 401) {
+            toast.error("Session expired. Please login again.");
+          } else {
+            toast.error("Authentication failed. Please login again.");
+          }
+          navigate('/login');
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     validateAuth();
-  }, [setProfile]);
+  }, [setProfile, location.pathname, navigate]);
 
   if (isLoading) {
     return (

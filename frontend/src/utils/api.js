@@ -1,7 +1,8 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://re-event-1.onrender.com';
+// Force using localhost in development
+const API_URL = 'http://localhost:5000';
 
 const api = axios.create({
   baseURL: API_URL,

@@ -74,42 +74,40 @@ const LogSign = ({ isModal = false }) => {
       
       // Set token with proper expiration
       Cookies.set("token", token, { 
-        expires: 1 / 24, // 1 hour
+        path: "/",
+        expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour from now
         secure: true,
         sameSite: 'strict'
       });
 
-      toast.success('Login successful');
-      
       // Set user cookie with proper expiration
       setCookie("user", user, { 
         path: "/",
-        expires: 1 / 24, // 1 hour
+        expires: new Date(Date.now() + 60 * 60 * 1000), // 1 hour from now
         secure: true,
         sameSite: 'strict'
       });
       
       setProfile(user);
+      toast.success('Login successful');
 
-      if (user.decodedjwt?.user === null) {
-        toast.info("Please set your username");
-        setAskuserName(true);
-      }
-
-      // Close modal if it's a modal login
-      if (isModal && setOpenlogin) {
-        setOpenlogin(false);
-      }
-
-      navigate("/dashboard");
+      // Small delay to ensure cookies are set
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 500);
+      
     } catch (error) {
       console.error('OTP Verification Error:', error);
-      const errorMessage = error.response?.data?.message || 
+      if (error.code === 'ERR_NETWORK') {
+        toast.error('Cannot connect to server. Please try again later.');
+      } else {
+        const errorMessage = error.response?.data?.message || 
                           error.response?.data?.error || 
                           error.message || 
                           "Verification failed";
-      toast.error(errorMessage);
-      setMessage(errorMessage);
+        toast.error(errorMessage);
+      }
+      setMessage(error.message || 'Verification failed');
     }
   };
 

@@ -1,0 +1,137 @@
+[33mcommit a2e3ae4730328affd6378372868b535d74a8637f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/restore-version[m[33m, [m[1;31morigin/main[m[33m, [m[1;32mrestore-version[m[33m)[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Tue Apr 8 19:17:27 2025 +0530
+
+    cors error
+
+[33mcommit 9558b21ca0791341583833889db0de0a6ba84602[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Tue Apr 8 19:14:27 2025 +0530
+
+    otp digits changed to 6
+
+[33mcommit 7e5e55f9111a2e9191e7d13c225eba8b4b1baef2[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Tue Apr 8 19:10:11 2025 +0530
+
+    otp digits changed to 6
+
+[33mcommit 333fc58aaeae4ce4e5f69b5d3d6e620c65c838c9[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Tue Apr 8 19:01:02 2025 +0530
+
+    otp digits changed to 5
+
+[33mcommit 282d24227e59861b5677a4f85796efbbd3472ae2[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Tue Apr 8 18:50:48 2025 +0530
+
+    backend endpoints changed
+
+[33mcommit 4cf114c5bb75f24fd3e84e6e0cce325232946c75[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Tue Apr 8 17:49:48 2025 +0530
+
+    trust proxy error resolved
+
+[33mcommit d26a7465049ff008c7cf43ffd262f56ac67646ed[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Tue Apr 8 17:42:21 2025 +0530
+
+    backend end is all fine
+
+[33mcommit dfc82c7bcf0a4299b743d46cf95de04411a7ebdc[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 22:09:54 2025 +0530
+
+    Update all hardcoded URLs to use environment variable
+
+[33mcommit eb4cc81788ee1d621d86124655ceae688638ad41[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 21:56:54 2025 +0530
+
+    Update API URLs to use environment variable
+
+[33mcommit 327ed7ccb031b495f671e72957fd1706ca45da54[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 21:46:09 2025 +0530
+
+    Fix CORS and API URL configuration
+
+[33mcommit 5be1498728560e9bed3185ed62fbf6a131c793a8[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 21:45:42 2025 +0530
+
+    Fix CORS and API URL configuration
+
+[33mcommit 3b5bd9e8548362c6ef4547f3414e64706d50df71[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 21:28:07 2025 +0530
+
+    Improve email configuration and error handling
+
+[33mcommit ce6b6bcb3a51ffdf99049cee2c4c6e732cb5ec67[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 21:18:30 2025 +0530
+
+    Fix email configuration and remove duplicate code
+
+[33mcommit e78dfa889666f7be6637d7238688031824227570[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 16:26:12 2025 +0530
+
+    Fix email configuration and remove duplicate code
+
+[33mcommit 309cbe30a894e72f5a1363855b9b6cca63f1018d[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 16:12:59 2025 +0530
+
+    Improve email configuration and OTP sending
+
+[33mcommit 7aa390ddc7d8b6b0c75226cef6fa9095ec687c08[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 16:02:41 2025 +0530
+
+    Fix module loading and deployment issues
+
+[33mcommit c417151577227458123aa3b277839ee2d12f94c9[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 15:58:26 2025 +0530
+
+    Fix PWA configuration and module loading issues
+
+[33mcommit 81293ba82e10c4398647dcb1412473b246059080[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 15:48:00 2025 +0530
+
+    Replace modern-react-qr-reader with html5-qrcode for React 18 compatibility
+
+[33mcommit ed7c33e08b8f9e7f822c4b386bc648a2f7aeb8a4[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 15:43:14 2025 +0530
+
+    Add npm and Vercel configuration for deployment
+
+[33mcommit 1a0c79242eb75adbd9eb7856fd886b19beebf640[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 15:37:21 2025 +0530
+
+    connected backend
+
+[33mcommit d9598561555577cbd736ba61361407726a58da7b[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 15:24:47 2025 +0530
+
+    Update backend configuration and improve MongoDB connection handling
+
+[33mcommit 8c36f6d7fab9bc19131009d5e5c7640bcc7c5121[m
+Author: Sahith chowdary <guthasahithchowdary@gmail.com>
+Date:   Fri Mar 28 02:18:28 2025 +0530
+
+    Initial commit
+
+[33mcommit 3c3e11bed90b1d0f0c835356fce422f74867bee2[m
+Author: Sahith chowdary <115578214+Sahith53@users.noreply.github.com>
+Date:   Fri Mar 28 01:43:23 2025 +0530
+
+    Initial commit

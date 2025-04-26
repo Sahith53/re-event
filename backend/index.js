@@ -62,7 +62,7 @@ app.use('/api', apiLimiter);
 
 // Routes
 app.use('/api/events', eventRoutes);
-app.use('/login', LoginController);
+app.use('/api/auth', LoginController);
 app.use('/api/otp', otpRoutes);
 
 // Error handling should be last

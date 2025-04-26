@@ -107,27 +107,20 @@ export const verifyOtp = async (req, res) => {
       const user = await UserModel.findOne({ email });
       console.log(user)
 
-      // Or, generate a JWT
+      // Generate a JWT
       const token = jwt.sign(
-        { userId: user._id, email: user.email },
-        process.env.JWT_SECRET, // Use the imported secret from config.js
-        { expiresIn: '1h' } // Token expiration time, adjust as needed
+        { email: user.email },  // Only include email in the token payload
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }  // Match production expiration time
       );
-
-      // Create a session
-      req.session.user = {
-        userId: user._id,
-        email: user.email,
-      };
 
       res.status(200).json({
         success: true,
-        message: 'OTP verification successful',
-        token: token, // Include the token in the response
+        message: 'OTP verified successfully',
+        token: token,
         user: {
-          userId: user._id,
-          email: user.email,
-        },
+          email: user.email
+        }
       });
     } else {
       res.status(401).json({
@@ -232,12 +225,49 @@ export const setUsername = async (req, res) => {
   }
 };
 
+export const validateToken = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ valid: false, message: 'No token provided' });
+    }
+
+    // Verify the token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Find user by email (since we only store email in token)
+    const user = await UserModel.findOne({ email: decoded.email });
+
+    if (!user) {
+      return res.status(401).json({ valid: false, message: 'User not found' });
+    }
+
+    // Return success with user data
+    res.json({ 
+      valid: true, 
+      user: {
+        email: user.email,
+        username: user.username || null
+      }
+    });
+  } catch (error) {
+    console.error('Token validation error:', error);
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ valid: false, message: 'Token expired' });
+    }
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ valid: false, message: 'Invalid token' });
+    }
+    res.status(401).json({ valid: false, message: 'Authentication failed' });
+  }
+};
+
 // Create router
 const router = Router();
 
-// OTP routes
-router.post('/sendotp', sendOtp);
-router.post('/verifyotp', verifyOtp);
+// Auth routes
+router.get('/validate-token', validateToken);  // Make sure this is first
 router.get('/me', getProfile);
 router.get('/me2', getProfile2);
 router.post('/setusername', setUsername);
