@@ -27,7 +27,11 @@ app.set('trust proxy', 1);
 
 // Configure CORS
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://re-event-1.onrender.com'],
+    origin: [
+        'http://localhost:5173',
+        'https://re-event-1.onrender.com',
+        'https://re-event-orcin.vercel.app' // <-- Add your Vercel frontend URL here
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     credentials: true,
