@@ -21,6 +21,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import classnames from "classnames";
 
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const CreateNew = (props) => {
