@@ -9,18 +9,23 @@ const LoginNavbar = () => {
   const { openlogin, setOpenlogin } = useMainDashContext();
   const [openProfile, setOpenProfile] = useState(false);
   const navigate = useNavigate();
-  // const [modifiedEmail1, setModifiedEmail] = useState("");
 
-  // const { profile, setProfile } = useMainDashContext();
+  // Safely parse user cookie
   const cookie = Cookies.get("user");
-  const user = JSON.parse(cookie);
-  const email = user.decodedjwt?.decode?.email;
-  const username = user.decodedjwt.user;
+  let user = null;
+  let email = "";
+  let username = "";
 
+  if (cookie) {
+    try {
+      user = JSON.parse(cookie);
+      email = user?.decodedjwt?.decode?.email || user?.email || "";
+      username = user?.decodedjwt?.user || user?.username || "";
+    } catch (e) {
+      // If parsing fails, user stays null
+    }
+  }
 
-
-
- 
   const toggleMobileMenu = () => {
     setShowMobileMenu(!showMobileMenu);
   };
@@ -28,13 +33,11 @@ const LoginNavbar = () => {
     setOpenlogin(!openlogin);
   };
 
-  //   const handleDate = ()=>{
   const newdate = new Date();
   const date = newdate.getDate();
   const month = newdate.getMonth();
   const year = newdate.getFullYear();
   const hours = newdate.getHours();
-  // get 12 hour format
   const hoursIn12HrFormat = hours >= 13 ? hours % 12 : hours;
   const minutes = newdate.getMinutes();
   const seconds = newdate.getSeconds();
@@ -49,30 +52,18 @@ const LoginNavbar = () => {
   };
 
   const handleLogout = () => {
-    // Clear all auth-related cookies
     Cookies.remove("user", { path: "/" });
     Cookies.remove("token", { path: "/" });
-    
-    // Clear any other related data
     localStorage.clear();
     sessionStorage.clear();
-    
-    // Close profile menu
     setOpenProfile(false);
-    
-    // Navigate to home page
     navigate("/");
-    
-    // Force a hard reload to clear all state
     window.location.reload();
   };
-  //   }
 
   return (
     <>
       <div className="w-full z-[1000]  flex fixed bg-zinc-900/80 items-center backdrop-blur-2xl justify-between px-12 py-4 border-b border-gray-600 text-white">
-        {/* <div className="w-full z-50 flex fixed bg-zinc-900/80 items-center justify-between px-12 py-4 border-b border-gray-600 text-white"> */}
-
         <div className="flex">
           <Link
             to="/"
@@ -107,8 +98,8 @@ const LoginNavbar = () => {
                     className="w-9 h-9 rounded-full border-2"
                   />
                   <div className=" flex  py-1 flex-col  items-start ">
-                    <h1 className="text-white text-lg "> {username} </h1>
-                    <h2 className="text-white/60 text-sm">{email}</h2>
+                    <h1 className="text-white text-lg "> {username || "Guest"} </h1>
+                    <h2 className="text-white/60 text-sm">{email || ""}</h2>
                   </div>
                 </div>
                 <hr className="   text-white/30 border-white/20  w-full" />
@@ -142,7 +133,7 @@ const LoginNavbar = () => {
 
       {showMobileMenu && (
         <div className="md:hidden flex flex-col items-center bg-gray-900/60 backdrop-blur-lg absolute px-4 top-20 w-3/4 border rounded-xl left-10 py-4">
-           {cookie && (
+           {user ? (
             <div className="flex flex-col w-full gap-4">
 
               <Link
@@ -164,7 +155,7 @@ const LoginNavbar = () => {
                 Profile
               </Link>
             </div>
-          ) || (
+          ) : (
               <button
                 className="text-sm w-full text-center bg-zinc-100 rounded-xl shadow-lg text-white px-4 py-1.5 hover:scale-105 hover:bg-black/80 transition-all cursor-pointer"
                 onClick={handleLoginClick}

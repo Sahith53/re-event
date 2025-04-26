@@ -9,29 +9,38 @@ const components = {
   Settings: Settings
 };
 
-
 const Profile = () => {
   const { userProfileMenu, setUserprofilemenu } = useMainDashContext();
   const ActiveComponent = components[userProfileMenu] || null;
   const cookie = Cookies.get('user');
-  // console.log(cookie);
-  const user = JSON.parse(cookie);
-  // console.log(user);
-  const email = user.decodedjwt.decode.email;
-  const username = user.decodedjwt.user;
+  let user = null;
+  let email = "";
+  let username = "";
+
+  if (cookie) {
+    try {
+      user = JSON.parse(cookie);
+      email = user?.decodedjwt?.decode?.email || user?.email || "";
+      username = user?.decodedjwt?.user || user?.username || "";
+    } catch (e) {
+      // If parsing fails, user stays null
+    }
+  }
 
   const [userdata, setUserdata] = useState({});
   useEffect(() => {
     const getuser = async () => {
       try {
-        const response = await axios.get(`https://re-event-backend.onrender.com/events/geteventsbyuserid/${email}`);
-        setUserdata(response.data);
+        if (email) {
+          const response = await axios.get(`https://re-event-backend.onrender.com/events/geteventsbyuserid/${email}`);
+          setUserdata(response.data);
+        }
       } catch (error) {
         console.error('Error:', error);
       }
     };
     getuser();
-  }, []);
+  }, [email]);
   return (
     <>
       <div className="w-full flex py-20 px-8 md:p-32 flex-col items-center justify-center">
@@ -40,8 +49,8 @@ const Profile = () => {
             <div className="flex gap-4 px-4 md:px-12 py-4 bg-zinc-800/40 border border-zinc-700/40 rounded-2xl items-center">
               <img src="https://picsum.photos/200" alt="profile" className="rounded-full w=20 h-20 md:h-32 md:w-32" />
               <div className="flex flex-col gap-4">
-                <p className='text-sm md:text-xl font-semibold'>{username}</p>
-                <p className='text-sm md:text-md'>{email}</p>
+                <p className='text-sm md:text-xl font-semibold'>{username || "Guest"}</p>
+                <p className='text-sm md:text-md'>{email || ""}</p>
               </div>
             </div>
 
