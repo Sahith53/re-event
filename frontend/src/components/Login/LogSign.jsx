@@ -57,33 +57,44 @@ const LogSign = () => {
   const handleOtpSubmitForm = async () => {
     try {
       const response = await axiosInstance.post('/login/verify-otp', { otp, email });
-      const { token } = response.data;
+      
+      if (response.data.success) {
+        const { token, user } = response.data;
+        Cookies.set("token", token, { expires: 1 / 24 });
+        toast.success("OTP verified successfully");
 
-      Cookies.set("token", token, { expires: 1 / 24 });
-      toast.success("OTP verified successfully");
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        };
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+        const userResponse = await axiosInstance.get('/user', config);
+        setCookie("user", userResponse.data, { path: "/" });
+        setProfile(userResponse.data);
+
+        if (userResponse.data.decodedjwt.user === null) {
+          toast.info("Please set your username");
+          setAskuserName(true);
         }
-      };
 
-      const userResponse = await axiosInstance.get('/user', config);
-      setCookie("user", userResponse.data, { path: "/" });
-      setProfile(userResponse.data);
-
-      if (userResponse.data.decodedjwt.user === null) {
-        toast.info("Please set your username");
-        setAskuserName(true);
+        navigate("/dashboard");
+      } else {
+        toast.error(response.data.message || "OTP verification failed");
       }
-
-      navigate("/dashboard");
     } catch (error) {
       console.error("Error verifying OTP:", error);
-      const errorMessage = error.response?.data?.message || "Failed to verify OTP. Please try again.";
-      toast.error(errorMessage);
+      if (error.response?.status === 401) {
+        toast.error("Invalid OTP. Please try again.");
+      } else if (error.response?.status === 500) {
+        toast.error("OTP has expired. Please request a new OTP.");
+        setOncontinue(false);
+      } else {
+        const errorMessage = error.response?.data?.message || "Failed to verify OTP. Please try again.";
+        toast.error(errorMessage);
+      }
     }
   };
 
