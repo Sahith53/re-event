@@ -5,7 +5,8 @@ import arrow from '../assets/arrow.png';
 import { motion } from 'framer-motion';
 import { TbPhotoEdit } from "react-icons/tb";
 import { MdManageAccounts } from "react-icons/md";
-
+import { FaCalendarAlt } from "react-icons/fa";
+import { IoTicketOutline } from "react-icons/io5";
 
 const HeroSection = () => {
   const token = Cookies.get("user");
@@ -63,51 +64,46 @@ const HeroSection = () => {
             </motion.div>
           </div>
 
-
-
-          {/* <div className="w-full flex flex-col md:flex-row rounded-[3rem] gap-5 my-12">
-            <motion.div className="w-full z-0 bg-zinc-800 border flex border-zinc-400/40 relative rounded-3xl group shadow-xl shadow-zinc-600/20 text-white"
+          {/* Feature section - replacing the commented out section */}
+          <div className="w-full flex flex-col md:flex-row rounded-[3rem] gap-5 my-12">
+            <motion.div 
+              className="w-full md:w-1/3 bg-zinc-800 border flex flex-col border-zinc-400/40 relative rounded-3xl group shadow-xl shadow-zinc-600/20 text-white p-8"
               initial={{ opacity: 0, y: 100 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7 }}
               whileHover={{ scale: 1.02 }}
             >
-              <div className="w-1/2 p-8 flex flex-col items-start">
-                <TbPhotoEdit className="text-4xl p-1 bg-zinc-100 rounded-lg text-black mb-3" />
-                <span className="herofont text-xl">Personalised Pages</span>
-                <span className="text-sm">Re:Event gives you access to personalise your event pages.</span>
-              </div>
-              <div className="w-1/2 p-8 flex flex-col items-start">
-                <MdManageAccounts className="text-4xl p-1 bg-zinc-100 rounded-lg text-black mb-3" />
-                <span className="herofont text-xl">Manage Event</span>
-                <span className="text-sm">Re:Event gives you access to manage your event.</span>
-              </div>
+              <TbPhotoEdit className="text-4xl p-1 bg-zinc-100 rounded-lg text-black mb-3" />
+              <span className="herofont text-xl">Personalized Pages</span>
+              <span className="text-sm">Create custom event pages with your branding, images, and details to engage your audience.</span>
             </motion.div>
-            <motion.div className="w-full bg-zinc-300 border text-zinc-900 border-zinc-800/40 shadow-xl shadow-zinc-300/20 flex rounded-3xl"
+            
+            <motion.div 
+              className="w-full md:w-1/3 bg-zinc-800 border flex flex-col border-zinc-400/40 relative rounded-3xl group shadow-xl shadow-zinc-600/20 text-white p-8"
               initial={{ opacity: 0, y: 100 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}>
-              <div className="w-1/2 p-8 flex flex-col items-start">
-                <TbPhotoEdit className="text-4xl p-1 bg-zinc-800 rounded-lg text-zinc-300 mb-3" />
-                <span className="herofont text-xl">Personalised Pages</span>
-                <span className="text-sm">Re:Event gives you access to personalise your event pages.</span>
-              </div>
-              <div className="w-1/2 p-8 flex flex-col  items-start">
-                <MdManageAccounts className="text-4xl p-1 bg-zinc-800 rounded-lg text-zinc-300 mb-3" />
-                <span className="herofont  text-xl">Manage Event</span>
-                <span className="text-sm">Re:Event gives you access to manage your event.</span>
-              </div>
+              transition={{ duration: 0.9 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <MdManageAccounts className="text-4xl p-1 bg-zinc-100 rounded-lg text-black mb-3" />
+              <span className="herofont text-xl">Event Management</span>
+              <span className="text-sm">Powerful tools to manage registrations, attendees, and event communications all in one place.</span>
             </motion.div>
-            <motion.div className="w-full lg:w-1/3 bg-slate-300 p-20 rounded-3xl"
+            
+            <motion.div 
+              className="w-full md:w-1/3 bg-zinc-800 border flex flex-col border-zinc-400/40 relative rounded-3xl group shadow-xl shadow-zinc-600/20 text-white p-8"
               initial={{ opacity: 0, y: 100 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.4 }}>
-              okayyyy
+              transition={{ duration: 1.1 }}
+              whileHover={{ scale: 1.02 }}
+            >
+              <IoTicketOutline className="text-4xl p-1 bg-zinc-100 rounded-lg text-black mb-3" />
+              <span className="herofont text-xl">Check-in System</span>
+              <span className="text-sm">Streamlined check-in process with QR codes for a seamless attendee experience.</span>
             </motion.div>
-          </div> */}
+          </div>
         </div>
       </div>
-
     </>
   );
 };
