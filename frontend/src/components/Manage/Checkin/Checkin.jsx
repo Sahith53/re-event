@@ -60,9 +60,7 @@ const Checkin = () => {
   useEffect(() => {
     const fetchGuests = async () => {
       try {
-        const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/getcheckinusers/${id}`
-        );
+        const response = await axios.get(API_ENDPOINTS.GET_CHECKIN_USERS(id));
         console.log(response.data);
         setGuestsData(response.data);
       } catch (error) {

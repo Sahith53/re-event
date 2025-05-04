@@ -14,6 +14,7 @@ import Cookies from "js-cookie";
 import { IoTicketOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import QRCode from "qrcode";
+import { API_ENDPOINTS } from '../config/api';
 
 const EventPage = () => {
   const { RegisterClick, setRegisterClick } = useMainDashContext();
@@ -39,22 +40,17 @@ const EventPage = () => {
   // useEffect(() => {
   //   const trackEventView = async () => {
   //     try {
-  //       const response = await axios.get(
-  //         `https://re-event-backend.onrender.com/events/trackEventPageView/`
-  //       );
+  //       const response = await axios.get(API_ENDPOINTS.TRACK_EVENT_PAGE_VIEW(id));
   //     } catch (error) {
   //       console.error('Error tracking event view:', error);
   //     }
   //   };
-
   //   trackEventView();
   // }, [id]);
   useEffect(() => {
     const getuserEvents = async () => {
       try {
-        const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/geteventsbyuserid/${_umail}`
-        );
+        const response = await axios.get(API_ENDPOINTS.GET_EVENTS_BY_USER(_umail));
         const userEvents = response.data.createdEvents;
         const isthis = userEvents.some((event) => event === id);
         setIsUserEvent(isthis);
@@ -68,9 +64,7 @@ const EventPage = () => {
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/geteventbyid/${id}`
-        );
+        const response = await axios.get(API_ENDPOINTS.GET_EVENT_BY_ID(id));
 
         const eventData = response.data;
         setEvent(eventData);
@@ -90,7 +84,7 @@ const EventPage = () => {
       const loadingPromise = toast.promise(
         new Promise((resolve, reject) => {
           axios
-            .post(`https://re-event-backend.onrender.com/events/neweventAddUser/${id}`, {
+            .post(API_ENDPOINTS.ADD_USER_TO_EVENT(id), {
               _uid: _id,
               email: _umail,
             })
@@ -126,9 +120,7 @@ const EventPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/checkuserev/${id}/${_id}`
-        );
+        const response = await axios.get(API_ENDPOINTS.CHECK_USER_EVENT(id, _id));
 
         if (response.status === 200) {
           console.log(response.data.qrUniqueCode);
@@ -159,7 +151,18 @@ const EventPage = () => {
     });
   };
 
+  // Track page view
+  useEffect(() => {
+    const trackEventView = async () => {
+      try {
+        await axios.post(API_ENDPOINTS.TRACK_EVENT_VIEW, { eventId: id });
+      } catch (error) {
+        console.error('Error tracking event view:', error);
+      }
+    };
 
+    trackEventView();
+  }, [id]);
 
   return (
     <>

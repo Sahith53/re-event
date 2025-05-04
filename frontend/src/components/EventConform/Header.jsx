@@ -9,7 +9,7 @@ const Header = () => {
     const getEvent = async () => {
       try {
         const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/geteventbyid/${id}`
+          `https://re-event-1.onrender.com/events/geteventbyid/${id}`
         );
         setEvent(response.data);
       } catch (error) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import EventCard from "../components/Dashboard/EventCard";
 import axios from "axios";
 import { toast } from "sonner";
+import { API_ENDPOINTS } from '../config/api';
 
 
 const Explore = () => {
@@ -10,7 +11,7 @@ const Explore = () => {
   useEffect(() => {
     const getAllEvents = async () => {
       try {
-        const response = await axios.get('https://re-event-backend.onrender.com/events/getevents');
+        const response = await axios.get(API_ENDPOINTS.GET_ALL_EVENTS);
         setEvents(response.data);
       } catch (error) {
         console.error('Error:', error);

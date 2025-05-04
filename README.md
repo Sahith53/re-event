@@ -66,9 +66,9 @@ ISC
 
 Your Name
 
-Frontend deployed link : https://rvent.vercel.app/
+Frontend deployed link : https://re-event-orcin.vercel.app/
 <br>
-API end point : https://re-event-backend.onrender.com/
+API end point : https://re-event-1.onrender.com/
 <br>
 <br>
 API Documentation : https://documenter.getpostman.com/view/19902058/2s9YymFjGx

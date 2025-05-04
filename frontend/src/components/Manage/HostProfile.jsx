@@ -3,6 +3,7 @@ import { MdOutlineEdit, MdOutlineAttachEmail } from "react-icons/md";
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { API_ENDPOINTS } from '../../config/api';
 
 const HostCard = ({ email }) => {
     return (
@@ -37,7 +38,7 @@ const HostProfile = (props) => {
 
     const handleInviteHost = async () => {
         try {
-            const response = await axios.post('https://re-event-backend.onrender.com/events/addneweventtohost', { userEmail: email, eventcode: id });
+            const response = await axios.post(API_ENDPOINTS.ADD_NEW_EVENT_TO_HOST, { userEmail: email, eventcode: id });
 
             if (response.data.message) {
                 toast.success(response.data.message);
@@ -49,7 +50,7 @@ const HostProfile = (props) => {
         }
 
         try {
-            const response = await axios.post('https://re-event-backend.onrender.com/addnewhostotevent', { eventcode: id, hostEmail: email });
+            const response = await axios.post(API_ENDPOINTS.ADD_NEW_HOST_TO_EVENT, { eventcode: id, hostEmail: email });
 
             if (response.data.message) {
                 toast.success(response.data.message);

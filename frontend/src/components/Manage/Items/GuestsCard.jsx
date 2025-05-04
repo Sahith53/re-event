@@ -7,6 +7,7 @@ import { MdQrCode } from "react-icons/md";
 import axios from 'axios';
 import { format } from "date-fns";
 import { CSVLink } from 'react-csv';
+import { API_ENDPOINTS } from '../../../config/api';
 
 const GuestsCard = () => {
   const { id } = useParams();
@@ -18,9 +19,7 @@ const GuestsCard = () => {
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/geteventbyid/${id}`
-        );
+        const response = await axios.get(API_ENDPOINTS.GET_EVENT_BY_ID(id));
         setEvent(response.data);
         setTotalRegistrations(response.data.registeredUsers.length);
         setCsvData(response.data.registeredUsers.map((guest) => ({

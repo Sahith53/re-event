@@ -10,6 +10,7 @@ import { nanoid } from 'nanoid';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
+import { API_ENDPOINTS } from '../../../config/api';
 
 const EditEvent = () => {
   const { id } = useParams();
@@ -29,7 +30,7 @@ const EditEvent = () => {
 
   const getEventDetails = async () => {
     try {
-      const response = await axios.get(`https://re-event-backend.onrender.com/events/geteventbyid/${id}`);
+      const response = await axios.get(API_ENDPOINTS.GET_EVENT_BY_ID(id));
       setEvent(response.data);
       setEditedEvent(response.data);
 
@@ -69,7 +70,7 @@ const EditEvent = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.put(`https://re-event-backend.onrender.com/events/editevent/${id}`, editedEvent);
+      const response = await axios.put(API_ENDPOINTS.EDIT_EVENT(id), editedEvent);
       console.log('Event updated:', response.data);
       toast.success('Event updated successfully');
     } catch (error) {

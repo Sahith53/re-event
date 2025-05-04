@@ -10,12 +10,34 @@ import session from 'express-session';
 import jwt from 'jsonwebtoken';
 
 const app = express();
-app.use(cors({
-    origin: [process.env.FRONTEND_URL, 'http://localhost:5173'],
+
+// CORS configuration
+const corsOptions = {
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            process.env.FRONTEND_URL,
+            'http://localhost:5173',
+            'http://localhost:5174',
+            'https://re-event-orcin.vercel.app'
+        ];
+        
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    maxAge: 600 // Cache preflight request for 10 minutes
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -30,12 +52,6 @@ app.use(session({
 //changed
 
 import eventRoutes from './routes/eventRoutes.js';
-
-app.use(express.json());
-
-
-
-
 
 app.use('/', router);
 app.use('/login', router);

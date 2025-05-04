@@ -4,6 +4,7 @@
 // import Cookies from "js-cookie";
 // import { useMainDashContext } from "../../context/AppContext";
 // import axios from "axios";
+import { API_ENDPOINTS } from '../../config/api';
 
 // const RegisterComponent = (props) => {
 //   // const [registerCheck, setRegisterCheck] = useState(false);
@@ -26,9 +27,7 @@
 //   //   const fetchData = async () => {
 //   //     try {
 //   //       console.log(userData);
-//   //       const response = await axios.get(
-//   //         `https://re-event-backend.onrender.com/events/checkuserev/${id}/${_id}`
-//   //       );
+//   //       const response = await axios.get(API_ENDPOINTS.CHECK_USER_EVENT(id, _id));
 
 //   //       if (response.status === 205) {
 //   //         setRegisterCheck(true);

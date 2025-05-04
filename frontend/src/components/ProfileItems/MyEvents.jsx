@@ -3,6 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { API_ENDPOINTS } from '../../config/api';
 
 const MyEvents = () => {
   const [data, setData] = useState({});
@@ -16,9 +17,7 @@ const MyEvents = () => {
   useEffect(() => {
     const getUserEvents = async () => {
       try {
-        const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/geteventsbyuserid/${email1}`
-        );
+        const response = await axios.get(API_ENDPOINTS.GET_EVENTS_BY_USER(email1));
         setData(response.data);
         setRegisteredEvents(response.data.registeredEvents);
         setCreatedEvents(response.data.createdEvents);
@@ -31,9 +30,7 @@ const MyEvents = () => {
 
   const getEventDetails = async (eventcode) => {
     try {
-      const response = await axios.get(
-        `https://re-event-backend.onrender.com/events/geteventbyid/${eventcode}`
-      );
+      const response = await axios.get(API_ENDPOINTS.GET_EVENT_BY_ID(eventcode));
       setEventDetails(response.data); // Store event details in state
       toast.success("Event details fetched successfully");
     } catch (error) {

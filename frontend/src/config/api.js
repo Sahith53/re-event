@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://re-event-backend.onrender.com';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://re-event-1.onrender.com';
 
 export const API_ENDPOINTS = {
     // Auth endpoints

@@ -19,6 +19,7 @@ import { RiBox3Fill } from "react-icons/ri";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_ENDPOINTS } from '../config/api';
 
 const components = {
   Overview: Overview,
@@ -44,9 +45,7 @@ const ManageEvent = () => {
   useEffect(() => {
     const getuserEvents = async () => {
       try {
-        const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/geteventsbyuserid/${_umail}`
-        );
+        const response = await axios.get(API_ENDPOINTS.GET_EVENTS_BY_USER(_umail));
         const userEvents = response.data.createdEvents;
         const isthis = userEvents.some((event) => event === id);
         setIsUserEvent(isthis);

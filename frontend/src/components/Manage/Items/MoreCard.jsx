@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import Cookies from 'js-cookie';
+import { API_ENDPOINTS } from '../../../config/api';
 
 const MoreCard = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const MoreCard = () => {
 
   const handleDeleteEvent = async () => {
     try {
-      const response = await axios.delete(`https://re-event-backend.onrender.com/events/deleteevent/${id}`);
+      const response = await axios.delete(API_ENDPOINTS.DELETE_EVENT(id));
       if (response.status === 200) {
         // console.log('Event deleted successfully');
         toast.success('Event deleted successfully');

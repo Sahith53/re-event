@@ -6,6 +6,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { IoCloudDone } from "react-icons/io5";
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
+import { API_ENDPOINTS } from '../../../config/api';
 
 
 const Questions = () => {
@@ -23,9 +24,7 @@ const Questions = () => {
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/geteventbyid/${id}`
-        );
+        const response = await axios.get(API_ENDPOINTS.GET_EVENT_BY_ID(id));
         setEvent(response.data);
         setQuestions(response.data.questions || []);
       } catch (error) {
@@ -72,10 +71,8 @@ const Questions = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        `https://re-event-backend.onrender.com/events/${existingQuestions.length > 0 ? 'editquestionsforevent' : 'addquestionstoevent'}/${id}`,
-        {
-          questions,
-        }
+        API_ENDPOINTS[existingQuestions.length > 0 ? 'EDIT_QUESTIONS' : 'ADD_QUESTIONS'](id),
+        { questions }
       );
       setResponse(res.data);
       console.log(res.data);

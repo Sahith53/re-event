@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useMainDashContext } from '../context/AppContext';
 const UpcomingEvents = lazy(() => import('../components/Dashboard/UpcomingEvents'));
@@ -6,6 +5,7 @@ const PastEvents = lazy(() => import('../components/Dashboard/PastEvents'));
 import axios from 'axios';
 import { toast } from 'sonner';
 import Cookies from "js-cookie";
+import { API_ENDPOINTS } from '../config/api';
 
 
 // import { set } from "mongoose";
@@ -41,9 +41,7 @@ const Dashboard = () => {
   useEffect(() => {
     const getAllEvents = async () => {
       try {
-        const response = await axios.get(
-          "https://re-event-backend.onrender.com/events/getevents"
-        );
+        const response = await axios.get(API_ENDPOINTS.GET_ALL_EVENTS);
         setEvents(response.data);
         separateEvents(response.data);
         // setAskuserName(true);
@@ -119,10 +117,10 @@ const Dashboard = () => {
       }
 
       // Send the request to set the username
-      const response = await axios.post("https://re-event-backend.onrender.com/login/setusername", { username, uid });
+      const response = await axios.post(API_ENDPOINTS.SET_USERNAME, { username, uid });
 
       if (response.data.success) {
-        const updatedResponse = await axios.get("https://re-event-backend.onrender.com/login/me2", {
+        const updatedResponse = await axios.get(API_ENDPOINTS.GET_USER, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

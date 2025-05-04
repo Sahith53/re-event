@@ -6,6 +6,7 @@ import HostProfile from '../HostProfile';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { format } from "date-fns";
+import { API_ENDPOINTS } from '../../../config/api';
 
 const Overview = () => {
   const { setManagetab } = useMainDashContext();
@@ -14,9 +15,7 @@ const Overview = () => {
   useEffect(() => {
     const getEvent = async () => {
       try {
-        const response = await axios.get(
-          `https://re-event-backend.onrender.com/events/geteventbyid/${id}`
-        );
+        const response = await axios.get(API_ENDPOINTS.GET_EVENT_BY_ID(id));
         setEvent(response.data);
       } catch (error) {
         console.error("Error:", error);
