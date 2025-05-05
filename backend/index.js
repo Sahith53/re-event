@@ -14,12 +14,17 @@ const app = express();
 // CORS configuration
 const corsOptions = {
     origin: function (origin, callback) {
-        const allowedOrigins = [
-            process.env.FRONTEND_URL,
-            'http://localhost:5173',
-            'http://localhost:5174',
-            'https://re-event-orcin.vercel.app'
-        ];
+        const allowedOrigins = process.env.NODE_ENV === 'production' 
+            ? [
+                process.env.FRONTEND_URL,
+                'https://re-event-orcin.vercel.app'
+              ]
+            : [
+                process.env.FRONTEND_URL,
+                'https://localhost:5173',
+                'https://localhost:5174',
+                'https://re-event-orcin.vercel.app'
+              ];
         
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);

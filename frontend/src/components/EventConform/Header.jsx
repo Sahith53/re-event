@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { MdContentCopy } from "react-icons/md";
 import axios from "axios";
+import { API_URL } from "../../api";
 const Header = () => {
   const { id } = useParams();
   const [event, setEvent] = useState({});
@@ -9,7 +10,7 @@ const Header = () => {
     const getEvent = async () => {
       try {
         const response = await axios.get(
-          `https://re-event-1.onrender.com/events/geteventbyid/${id}`
+          `${API_URL}/events/geteventbyid/${id}`
         );
         setEvent(response.data);
       } catch (error) {

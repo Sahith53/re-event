@@ -9,11 +9,11 @@ import Cookies from "js-cookie";
 import { useMainDashContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { API_ENDPOINTS } from '../../config/api';
+import { API_URL } from '../../api';
 
 // Configure axios defaults
 const axiosInstance = axios.create({
-  baseURL: 'https://re-event-1.onrender.com',
+  baseURL: `${API_URL}`,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ const axiosInstance = axios.create({
 const LogSign = () => {
   const navigate = useNavigate();
   const { setProfile, setAskuserName } = useMainDashContext();
-  const [setCookie] = useCookies(["user"]);
+  const [cookies, setCookie] = useCookies(["user"]);
   const [oncontinue, setOncontinue] = useState(false);
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -71,7 +71,7 @@ const LogSign = () => {
           }
         };
 
-        const userResponse = await axiosInstance.get('/user', config);
+        const userResponse = await axiosInstance.get('/me', config);
         setCookie("user", userResponse.data, { path: "/" });
         setProfile(userResponse.data);
 

@@ -43,8 +43,8 @@ const config = {
   cors: {
     allowedOrigins: [
       process.env.FRONTEND_URL,
-      'http://localhost:5173',
-      'http://localhost:5174',
+      'https://localhost:5173',
+      'https://localhost:5174',
       'https://re-event-orcin.vercel.app',
     ],
     credentials: true,

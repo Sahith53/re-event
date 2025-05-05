@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa6";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { API_URL } from "../../api";
 
 const EventCard = (props) => {
   const { eventname, time, location, organiser, image, id, description } =
@@ -12,14 +13,16 @@ const EventCard = (props) => {
   const [isUserEvent, setIsUserEvent] = useState(false);
   const cookie = Cookies.get("user");
   const user = JSON.parse(cookie);
-  const _umail = user.decodedjwt.decode.email;
-
+  console.log(user);
+  const _umail = user?.decodedjwt?.email;
+  console.log(_umail,"hfghfghfghfghgf");
   useEffect(() => {
     const getuserEvents = async () => {
       try {
         const response = await axios.get(
-          `https://re-event-1.onrender.com/events/geteventsbyuserid/${_umail}`
+          `${API_URL}/events/geteventsbyuserid/${_umail}`
         );
+        console.log(response.data);
         // console.log(response.data.createdEvents);
         const userEvents = response.data.createdEvents.map((event) => event);
         const isthis = userEvents.includes(id);

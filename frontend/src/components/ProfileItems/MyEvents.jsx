@@ -13,6 +13,8 @@ const MyEvents = () => {
   const email = Cookies.get("user");
   const user = JSON.parse(email);
   const email1 = user?.decodedjwt?.email;
+  console.log(email1,"email1");
+  console.log(user,"user");
 
   useEffect(() => {
     const getUserEvents = async () => {

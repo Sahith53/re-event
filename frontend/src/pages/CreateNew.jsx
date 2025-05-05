@@ -29,11 +29,11 @@ const CreateNew = (props) => {
   const { newevent, setNewEvent } = useMainDashContext();
   const { width, saveName, mt } = props;
   const imagekit = new ImageKit({
-    publicKey: import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY,
-    privateKey: import.meta.env.VITE_IMAGEKIT_PRIVATE_KEY,
-    urlEndpoint: import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT,
+    publicKey: "public_2rLWcPMCq/TpjA/J9rqwkH8YLNU=",
+    privateKey: "private_cz09upy0twlhYcqaCnHidFizWKo=",
+    urlEndpoint: "https://ik.imagekit.io/vsnlabs",
     transformationPosition: "path",
-    authenticationEndpoint: `${import.meta.env.VITE_API_BASE_URL}/imagekit`,
+    authenticationEndpoint: "http://localhost:5000/imagekit",
   });
   // console.log("newevent", newevent);
   const email = Cookies.get("user");

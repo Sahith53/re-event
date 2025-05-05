@@ -38,7 +38,7 @@ const ManageEvent = () => {
   // console.log(cookie);
   const user = JSON.parse(cookie);
   // console.log(user);
-  const _umail = user.decodedjwt.decode.email;
+  const _umail = user?.decodedjwt?.email;
   // console.log(_umail);
   const [isUserEvent, setIsUserEvent] = useState(false);
   const { id } = useParams();
