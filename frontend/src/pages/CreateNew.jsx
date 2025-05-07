@@ -38,7 +38,7 @@ const CreateNew = (props) => {
   // console.log("newevent", newevent);
   const email = Cookies.get("user");
   const user = JSON.parse(email);
-  const email1 = user?.decodedjwt?.decode?.email;
+  const email1 = user?.decodedjwt?.email;
   // console.log(email1)
 
   const changeBackground = (imageUrl) => {
@@ -107,7 +107,7 @@ const CreateNew = (props) => {
 
   const addEventToCreatorUser = async (creatorId, eventcode) => {
     try {
-      await axios.post(API_ENDPOINTS.ADD_EVENT_TO_CREATOR, {
+      await axios.post("http://localhost:3000/events/addeventtocreatoruser", {
         creatorId,
         eventcode,
       });

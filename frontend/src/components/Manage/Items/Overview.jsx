@@ -66,8 +66,8 @@ const Overview = () => {
           <div className="w-full flex gap-2 flex-col">
             {event.registeredUsers &&
               event.registeredUsers.map((guest, index) => {
-                const username = guest.email.split('@')[0];
-                const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1);
+                const username = guest?.email?.split('@')[0];
+                const capitalizedUsername = username?.charAt(0)?.toUpperCase() + username?.slice(1);
                 return (
                   <GuestListMenuItem
                     key={index}

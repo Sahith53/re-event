@@ -13,7 +13,7 @@ const LoginNavbar = () => {
   // const { profile, setProfile } = useMainDashContext();
   const cookie = Cookies.get("user");
   const user = JSON.parse(cookie);
-  const email = user.decodedjwt?.decode?.email;
+  const email = user.decodedjwt?.email;
   const username = user.decodedjwt.user;
 
 

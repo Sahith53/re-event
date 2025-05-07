@@ -105,7 +105,7 @@ const Dashboard = () => {
     try {
       const userRaw = Cookies.get("user");
       const user = JSON.parse(userRaw);
-      const uid = user?.decodedjwt?.decode?.userId;
+      const uid = user?.decodedjwt?.userId;
       console.log(uid, username,"holaa")
       const token = Cookies.get("token");
 

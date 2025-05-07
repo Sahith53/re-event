@@ -23,9 +23,9 @@ const GuestsCard = () => {
         setEvent(response.data);
         setTotalRegistrations(response.data.registeredUsers.length);
         setCsvData(response.data.registeredUsers.map((guest) => ({
-          name: guest.email.split('@')[0],
-          email: guest.email,
-          registeredDate: format(new Date(guest.registeredDate), "do MMM yyyy, h:mm aa")
+          name: guest?.email?.split('@')[0],
+          email: guest?.email,
+          registeredDate: format(new Date(guest?.registeredDate), "do MMM yyyy, h:mm aa")
         })));
       } catch (error) {
         console.error("Error:", error);
@@ -38,11 +38,15 @@ const GuestsCard = () => {
   const progressBarWidth = (totalRegistrations / maximumRegistrations) * 100;
 
   const filteredUsers = event.registeredUsers && event.registeredUsers.filter((guest) => {
-    const username = guest.email.split('@')[0];
-    const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1);
+    if (!guest?.email) return false;
+    
+    const username = guest.email.split('@')[0] || '';
+    const capitalizedUsername = username ? username.charAt(0).toUpperCase() + username.slice(1) : '';
+    const searchLower = searchQuery.toLowerCase();
+    
     return (
-      guest.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      capitalizedUsername.toLowerCase().includes(searchQuery.toLowerCase())
+      guest.email.toLowerCase().includes(searchLower) ||
+      capitalizedUsername.toLowerCase().includes(searchLower)
     );
   });
 
@@ -101,8 +105,8 @@ const GuestsCard = () => {
             ) : (
               filteredUsers &&
               filteredUsers.map((guest, index) => {
-                const username = guest.email.split('@')[0];
-                const capitalizedUsername = username.charAt(0).toUpperCase() + username.slice(1);
+                const username = guest?.email?.split('@')[0];
+                const capitalizedUsername = username?.charAt(0)?.toUpperCase() + username?.slice(1);
                 return (
                   <GuestListMenuItem
                     key={index}
