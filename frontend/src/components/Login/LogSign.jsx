@@ -10,6 +10,7 @@ import { useMainDashContext } from "../../context/AppContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { API_URL } from '../../api';
+import { signInWithGoogle } from "../../config/firebase";
 
 // Configure axios defaults
 const axiosInstance = axios.create({
@@ -98,6 +99,77 @@ const LogSign = () => {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      // Show loading state
+      setMailloading(true);
+      
+      // Trigger Google sign-in popup
+      const result = await signInWithGoogle();
+      
+      // Extract user info from Google
+      const user = result.user;
+      const googleToken = await user.getIdToken();
+      
+      console.log('Google user:', user);
+      console.log('Google token:', googleToken);
+      
+      // Send Google token to your backend for verification
+      const response = await axiosInstance.post('/login/google-auth', {
+        idToken: googleToken,
+        email: user.email,
+        name: user.displayName,
+        photoURL: user.photoURL,
+        googleId: user.uid
+      });
+      
+      if (response.data.success) {
+        const { token, user: userData } = response.data;
+        
+        // Store your app's JWT token (same as OTP flow)
+        Cookies.set("token", token, { expires: 1 / 24 });
+        toast.success("Google sign-in successful!");
+        
+        // Get user profile and set up session (same as OTP flow)
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        };
+        
+        const userResponse = await axiosInstance.get('/me', config);
+        setCookie("user", userResponse.data, { path: "/" });
+        setProfile(userResponse.data);
+        
+        // Check if user needs to set username
+        if (userResponse.data.decodedjwt.user === null) {
+          toast.info("Please set your username");
+          setAskuserName(true);
+        }
+        
+        // Navigate to dashboard
+        navigate("/dashboard");
+      } else {
+        toast.error(response.data.message || "Google sign-in failed");
+      }
+      
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      
+      if (error.code === 'auth/popup-closed-by-user') {
+        toast.info("Sign-in cancelled");
+      } else if (error.code === 'auth/popup-blocked') {
+        toast.error("Popup was blocked. Please allow popups and try again.");
+      } else {
+        toast.error("Google sign-in failed. Please try again.");
+      }
+    } finally {
+      setMailloading(false);
+    }
+  };
+
   return (
     <>
       <div className="flex fixed top-0 left-0 z-10 w-full h-full items-center bg-black/50 backdrop-blur-md justify-center">
@@ -141,10 +213,15 @@ const LogSign = () => {
                   <hr className="border-gray-400" />
                   <button 
                     type="button"
-                    className="rounded-md flex bg-[#212325] border-white/30 border px-8 py-2 items-center justify-center gap-2"
-                  >
+                    className="rounded-md flex bg-[#212325] border-white/30 border px-8 py-2 items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleGoogleSignIn}
+                     disabled={mailloading}
+                    >
+
                     <FaGoogle className="text-gray-200" />
-                    <h1 className="text-gray-200">Continue with Google</h1>
+                    <h1 className="text-gray-200">
+                      {mailloading ? "Signing in..." : "Continue with Google"}
+                      </h1>
                   </button>
                 </form>
               </div>

@@ -67,7 +67,7 @@ const UpcomingEvents = ({ upcomingEvents }) => {
                     <div className="w-full md:w-3/4 flex flex-col gap-4">
                       {eventsOnDate.map((event) => (
                         <EventCard
-                          key={event.id}
+                          key={event.id || event.eventcode}
                           eventname={event.eventname}
                           location={event.eventlocation}
                           time={event.eventtime}

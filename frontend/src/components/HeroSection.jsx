@@ -28,7 +28,7 @@ const HeroSection = () => {
                 <div className="flex gap-4 items-start">
                   <img src={arrow} className="w-24 " />
                   <Link
-                    to={token ? "/create-event" : "/"}
+                    to={token ? "/create" : "/"}
                     className="bg-white px-4 py-2 herofont tracking-wide rounded-2xl text-black shadow-lg hover:scale-105 transition-all"
                   >
                     Create

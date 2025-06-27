@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import otpGenerator from 'otp-generator';
 import OtpModel from '../models/otpModel.js';
 import UserModel from '../models/user.js';
+import AuthService from './authService.js';
 import jwt from 'jsonwebtoken';
 // export { jwt };
 const sendVerificationEmail = async (email, otp) => {
@@ -479,14 +480,10 @@ export const sendOtp = async (req, res) => {
 
 export const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
-  console.log('Verification attempt for:', { email, otp });
+  console.log('OTP Verification attempt for:', { email, otp });
 
   try {
-    // Find the user by email
-    const existingUser = await UserModel.findOne({ email });
-    console.log('Existing user:', existingUser);
-
-    // Find the OTP document
+    // Find the OTP document first
     const otpDocument = await OtpModel.findOne({ email });
     console.log('OTP document found:', otpDocument);
 
@@ -506,60 +503,42 @@ export const verifyOtp = async (req, res) => {
       });
     }
 
-    // OTP is valid, proceed with user creation/login
-    let user = existingUser;
+    // OTP is valid - use AuthService for unified authentication
+    const authData = {
+      email,
+      provider: 'otp',
+      providerId: null, // OTP doesn't have external provider ID
+      profile: {}
+    };
+
+    const { user, isNewUser, token, authProvider } = await AuthService.authenticateUser(authData);
     
-    if (!existingUser) {
-      console.log('Creating new user');
-      // If the user does not exist, create a new user
-      const newUser = new UserModel({ 
-        email,
-        username: `user_${Date.now()}`, // Temporary username
-        registeredEvents: [],
-        createdEvents: []
-      });
-      user = await newUser.save();
-      console.log('New user created:', user);
-    }
+    // Delete the used OTP
+    await OtpModel.deleteOne({ email });
+    console.log('OTP document deleted');
 
-    try {
-      // Generate JWT token
-      const token = jwt.sign(
-        { userId: user._id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
-      console.log('JWT generated successfully');
+    // Send success response with unified format
+    return res.status(200).json({
+      success: true,
+      message: `Authentication successful via ${authProvider}`,
+      token,
+      user: {
+        userId: user._id,
+        email: user.email,
+        username: user.username,
+        authProviders: user.authProviders,
+        primaryAuthProvider: user.primaryAuthProvider,
+        isNewUser,
+        needsUsername: user.username.startsWith('user_'),
+        isEmailVerified: user.isEmailVerified
+      }
+    });
 
-      // Delete the used OTP
-      await OtpModel.deleteOne({ email });
-      console.log('OTP document deleted');
-
-      // Send success response
-      return res.status(200).json({
-        success: true,
-        message: 'OTP verification successful',
-        token,
-        user: {
-          userId: user._id,
-          email: user.email,
-          username: user.username,
-          needsUsername: user.username.startsWith('user_')
-        }
-      });
-    } catch (tokenError) {
-      console.error('Token generation error:', tokenError);
-      return res.status(500).json({
-        success: false,
-        message: 'Error generating authentication token',
-        error: tokenError.message
-      });
-    }
   } catch (error) {
-    console.error('Verification error:', error);
+    console.error('OTP verification error:', error);
     return res.status(500).json({
       success: false,
-      message: 'Internal Server Error',
+      message: 'Authentication failed',
       error: error.message
     });
   }
@@ -649,6 +628,126 @@ export const setUsername = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Internal Server Error',
+    });
+  }
+};
+
+/**
+ * Google Authentication Handler
+ * Handles Google OAuth authentication and unifies with existing email-based accounts
+ */
+export const googleAuth = async (req, res) => {
+  const { idToken, email, name, picture, googleId } = req.body;
+  
+  console.log('Google Authentication attempt for:', { email, name, googleId });
+
+  try {
+    // Basic validation
+    if (!email || !googleId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and Google ID are required'
+      });
+    }
+
+    // STEP 1: Check if user already exists by email
+    let existingUser = await UserModel.findOne({ email });
+    
+    if (existingUser) {
+      // User exists - log them in
+      console.log(`Existing user ${email} logging in via Google`);
+    } else {
+      // Create new user
+      console.log(`Creating new user ${email} via Google`);
+      existingUser = new UserModel({
+        email: email,
+        username: name || email.split('@')[0] || `user_${Date.now()}`,
+        registeredEvents: [],
+        createdEvents: []
+      });
+      await existingUser.save();
+      console.log('New user created successfully');
+    }
+    
+    // STEP 2: Generate JWT token (same as OTP flow)
+    const jwtToken = jwt.sign(
+      { 
+        userId: existingUser._id, 
+        email: existingUser.email,
+        user: existingUser.username
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+    
+    console.log('JWT token generated successfully');
+    
+    // STEP 3: Return success (same format as OTP verification)
+    res.status(200).json({
+      success: true,
+      message: 'Google authentication successful',
+      token: jwtToken,
+      user: {
+        id: existingUser._id,
+        email: existingUser.email,
+        username: existingUser.username,
+        needsUsername: existingUser.username.startsWith('user_')
+      }
+    });
+    
+  } catch (error) {
+    console.error('Google auth error:', error);
+    console.error('Error stack:', error.stack);
+    
+    res.status(500).json({
+      success: false,
+      message: 'Google authentication failed',
+      error: error.message
+    });
+  }
+};
+/**
+ * Get user's authentication providers
+ */
+export const getUserAuthProviders = async (req, res) => {
+  try {
+    const { email } = req.params;
+    
+    const providers = await AuthService.getUserAuthProviders(email);
+    
+    res.status(200).json({
+      success: true,
+      authProviders: providers
+    });
+  } catch (error) {
+    console.error('Error fetching auth providers:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch authentication providers',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * Link new authentication provider to existing account
+ */
+export const linkAuthProvider = async (req, res) => {
+  try {
+    const { email, provider, providerId, profile } = req.body;
+    
+    const user = await AuthService.linkAuthProvider(email, provider, providerId, profile);
+    
+    res.status(200).json({
+      success: true,
+      message: `${provider} authentication linked successfully`,
+      authProviders: user.authProviders
+    });
+  } catch (error) {
+    console.error('Error linking auth provider:', error);
+    res.status(400).json({
+      success: false,
+      message: error.message
     });
   }
 };

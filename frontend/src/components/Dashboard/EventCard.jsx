@@ -33,7 +33,7 @@ const EventCard = (props) => {
     };
 
     getuserEvents();
-  }, [id]);
+  }, [id, _umail]);
 
   return (
     <>
