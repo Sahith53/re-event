@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { API_ENDPOINTS } from '../../config/api';
+import apiClient from '../../config/axios';
 
 const MyEvents = () => {
   const [data, setData] = useState({});
@@ -16,13 +17,17 @@ const MyEvents = () => {
   console.log(email1,"email1");
   console.log(user,"user");
 
+  const [createdEventDetails, setCreatedEventDetails] = useState([]);
+
   useEffect(() => {
     const getUserEvents = async () => {
       try {
-        const response = await axios.get(API_ENDPOINTS.GET_EVENTS_BY_USER(email1));
+        const response = await apiClient.get(API_ENDPOINTS.GET_EVENTS_BY_USER(email1));
         setData(response.data);
         setRegisteredEvents(response.data.registeredEvents);
         setCreatedEvents(response.data.createdEvents);
+
+        await fetchCreatedEventDetails(response.data.createdEvents);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -40,21 +45,39 @@ const MyEvents = () => {
       toast.error("Error fetching event details");
     }
   }
+  const fetchCreatedEventDetails = async (eventCodes) => {
+    try {
+      const eventDetailsPromises = eventCodes.map(async (eventCode) => {
+        try {
+          const response = await axios.get(API_ENDPOINTS.GET_EVENT_BY_ID(eventCode));
+          return response.data;
+        } catch (error) {
+          console.error(`Error fetching event ${eventCode}:`, error);
+          return { eventcode: eventCode, eventname: `Event ${eventCode}`, error: true };
+        }
+      });
+      
+      const eventDetails = await Promise.all(eventDetailsPromises);
+      setCreatedEventDetails(eventDetails);
+    } catch (error) {
+      console.error("Error fetching created event details:", error);
+    }
+  };
 
   return (
     <div className="w-full flex items-center justify-center space-x-8">
       <div className="w-1/2">
-        {createdEvents.length > 0 ? (
+        {createdEventDetails.length > 0 ? (
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-xl text-white">Created Events</h1>
             <div className="flex flex-col items-center justify-center">
-              {createdEvents.map((event) => (
+              {createdEventDetails.map((event) => (
                 <div key={event.eventcode} className="flex flex-col items-center justify-center my-4">
-                  <h1 className="text-3xl font-bold text-gray-100">{event}</h1>
+                  <h1 className="text-3xl font-bold text-gray-100">{event.eventname}</h1>
                   <div
                     // to={`/event/${event.eventcode}`}
                     className="text-blue-500 underline"
-                    onClick={() => getEventDetails(event)}
+                    onClick={() => getEventDetails(event.eventcode)}
                   >
                     View Details
                   </div>

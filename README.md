@@ -73,7 +73,7 @@ API end point : https://re-event-1.onrender.com/
 <br>
 API Documentation : https://documenter.getpostman.com/view/19902058/2s9YymFjGx
 <br>
-FIGMA Link : https://www.figma.com/file/Azwbe6cIDtYnQIyqfgiXu7/re%3AEvent
+FIGMA Link : https://www.figma.com/design/C3fpPsQReb6oAGGYCHTmGk/re-Event?node-id=0-1&m=dev&t=zZwsJbW7rAvQ2XS7-1
 <br>
 
 <div align="center">

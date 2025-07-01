@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Resolved Firebase unauthorized domain errors by adding production domains to Firebase console
 - Fixed API URL configuration issues between development and production environments
 - Corrected environment variable setup on Render deployment platform
+- **Display Event Titles in Profile** – Replaced event codes with human-readable event titles in Created Events section (`frontend/src/components/ProfileItems/MyEvents.jsx`)
 
 ### Security
 - Implemented Firebase token verification on backend to prevent token tampering

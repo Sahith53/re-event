@@ -21,8 +21,7 @@ const corsOptions = {
               ]
             : [
                 process.env.FRONTEND_URL,
-                'https://localhost:5173',
-                'https://localhost:5174',
+                'http://localhost:5173',
                 'https://re-event-orcin.vercel.app'
               ];
         
@@ -73,4 +72,4 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 }
 );
 
-app.listen(port, () => console.log(`yowamio listening on port ${port}!`));
+app.listen(port, () => console.log(`War on port no "${port}"!`));
