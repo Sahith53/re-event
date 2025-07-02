@@ -1,4 +1,6 @@
-export const API_BASE_URL = 'http://localhost:3000' || 'https://re-event-1.onrender.com';
+export const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://re-event-1.onrender.com' 
+  : 'http://localhost:3000';
 
 export const API_ENDPOINTS = {
     // Auth endpoints

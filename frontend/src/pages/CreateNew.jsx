@@ -107,7 +107,7 @@ const CreateNew = (props) => {
 
   const addEventToCreatorUser = async (creatorId, eventcode) => {
     try {
-      await axios.post("http://localhost:3000/events/addeventtocreatoruser", {
+      await axios.post(API_ENDPOINTS.ADD_EVENT_TO_CREATOR, {
         creatorId,
         eventcode,
       });
